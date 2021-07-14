@@ -13,4 +13,5 @@ RUN pip install opencv-python
 RUN pip install chrysalis
 RUN pip install imutils
 RUN pip install Flask
-RUN python mask_detection.py
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
