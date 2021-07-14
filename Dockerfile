@@ -12,4 +12,5 @@ RUN apt install -y libgl1-mesa-glx
 RUN pip install opencv-python
 RUN pip install chrysalis
 RUN pip install imutils
+RUN pip install Flask
 RUN python mask_detection.py
