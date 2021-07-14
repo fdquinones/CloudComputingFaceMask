@@ -92,9 +92,9 @@ def validate_param(param_name):
 
 if __name__ == "__main__":
 
-    port = validate_param('chrys_port')
-    host = validate_param('chrys_host')
-    password = validate_param('chrys_password')
+    port = '6113'
+    host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
+    password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
     cert_path = 'chryscloud.cer'
 
     chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
