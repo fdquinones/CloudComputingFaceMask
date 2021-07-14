@@ -115,6 +115,6 @@ if __name__ == "__main__":
     maskNet = load_model("mask_detector.model")
     
     # arrancar servidor web
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
     # initialize the video stream and allow the camera sensor to warm up
     print("[INFO] starting video stream...")
