@@ -8,4 +8,5 @@ COPY . .
 RUN python --version
 RUN ls
 RUN pip install imutils
+RUN pip install opencv-python
 RUN python mask_detection.py
