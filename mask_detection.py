@@ -21,6 +21,8 @@ os.environ['DISPLAY'] = ":0"
 
 default_confidence = 0.5
 
+app = Flask(__name__)
+
 def detect_and_predict_mask(frame, faceNet, maskNet):
     # grab the dimensions of the frame and then construct a blob
     # from it
@@ -91,6 +93,11 @@ def validate_param(param_name):
     print("[INFO] PARAM_NAME:", param_name, "PARAM_VALUE: ", os.environ[param_name])
     return os.environ[param_name]
 
+@app.route('/')
+def index():
+    """Video streaming home page."""
+    return render_template('index.html')
+
 if __name__ == "__main__":
 
     port = '6113'
@@ -107,5 +114,7 @@ if __name__ == "__main__":
     print("[INFO] loading face mask detector model...")
     maskNet = load_model("mask_detector.model")
     
+    # arrancar servidor web
+    app.run(debug=True)
     # initialize the video stream and allow the camera sensor to warm up
     print("[INFO] starting video stream...")
