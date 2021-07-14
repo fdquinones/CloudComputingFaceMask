@@ -1,5 +1,5 @@
 FROM tensorflow/tensorflow AS base
-EXPOSE 80
+EXPOSE 5000
 
 WORKDIR /utpl
 COPY . .
