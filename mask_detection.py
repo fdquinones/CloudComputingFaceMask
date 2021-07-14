@@ -8,6 +8,7 @@ import cv2
 import os
 import time
 import chrysalis
+import imutils
 
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
