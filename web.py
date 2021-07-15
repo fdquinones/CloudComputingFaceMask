@@ -37,6 +37,7 @@ def index():
     """Video streaming home page."""
     items = os.listdir('static/detections')
     items = ['detections/' + file for file in items]
+    items.sort()
     return render_template('index.html', items = items)
 
 
