@@ -12,18 +12,45 @@
     <title>Utpl face mask detector</title>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8  offset-lg-2">
-            <h3 class="mt-5">Live Streaming</h3>
-			<img src="{{ url_for('video_feed') }}" width="100%">
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark app-header-payment ">
+        <a class="navbar-brand" href="https://www.utpl.edu.ec/">
+			<img src="{{url_for('static', filename=logo.svg)}}" alt="UTPL">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse collapse-payment" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link app-header-payment-item" href="https://www.utpl.edu.ec/">Face mask detector <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
         </div>
-    </div>
-	<div class="row">		
-		 {% for item in items %}
-		<img src="{{url_for('static', filename=item)}}" alt="{{item}}">
-		{% endfor %}
+    </nav>
+</header>
+<!-- Begin page content -->
+<main role="main" class="container-fluid container-payment">
+    <div class="container">
+		<div class="row">
+			<div class="col-lg-8  offset-lg-2">
+				<h3 class="mt-5">Live Streaming</h3>
+				<img src="{{ url_for('video_feed') }}" width="100%">
+			</div>
+		</div>
+		<div class="row">		
+			 {% for item in items %}
+			<img src="{{url_for('static', filename=item)}}" alt="{{item}}">
+			{% endfor %}
+		</div>
 	</div>
-</div>
+</main>
+
+<footer class="footer-payment">
+    <div class="container">
+        <span class="text-white">Copyright &copy; 2021. Universidad Técnica Particular de Loja </span>
+    </div>
+</footer>
 </body>
 </html>
