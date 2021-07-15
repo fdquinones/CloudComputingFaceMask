@@ -2,15 +2,12 @@ import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
-from flask import Flask, render_template, Response
 import numpy as np
 import imutils
 import cv2
 import os
 import time
 import chrysalis
-import imutils
-import time
 
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -20,26 +17,9 @@ for device in gpu_devices:
 
 os.environ['DISPLAY'] = ":0"
 
-default_confidence = 0.8
-
-app = Flask(__name__)
-
-port = '6113'
-host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
-password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
-cert_path = 'chryscloud.cer'
-
-chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
-
-print("[INFO] loading face detector model...")
-prototxtPath ="deploy.prototxt"
-weightsPath = "res10_300x300_ssd_iter_140000.caffemodel"
-faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
-print("[INFO] loading face mask detector model...")
-maskNet = load_model("mask_detector.model")
+default_confidence = 0.5
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
-    print("[INFO] ingreso al detector...")
     # grab the dimensions of the frame and then construct a blob
     # from it
     (h, w) = frame.shape[:2]
@@ -63,9 +43,7 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 
         # filter out weak detections by ensuring the confidence is
         # greater than the minimum confidence
-        if confidence > default_confidence:                    
-            print("[INFO] Se detecto rostro...")
-            print(confidence)
+        if confidence > default_confidence:
             # compute the (x, y)-coordinates of the bounding box for
             # the object
             box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
@@ -101,20 +79,44 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
     # locations
     return (locs, preds)
 
-def gen_frames():  # generate frame by frame from camera
+def validate_param(param_name):
+    """
+    Validating OS environment variables
+
+    """
+    if param_name not in os.environ:
+        raise ValueError("missing environment variable " + param_name)
+    return os.environ[param_name]
+
+if __name__ == "__main__":
+
+    port = '6113'
+    host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
+    password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
+    cert_path = 'chryscloud.cer'
+
+    chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
+
+    print("[INFO] loading face detector model...")
+    prototxtPath ="deploy.prototxt"
+    weightsPath = "res10_300x300_ssd_iter_140000.caffemodel"
+    faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+    print("[INFO] loading face mask detector model...")
+    maskNet = load_model("mask_detector.model")
+    
+    # initialize the video stream and allow the camera sensor to warm up
+    print("[INFO] starting video stream...")
+    i = 0
     while True:
-        time.sleep(1) # Sleep for 3 seconds
-        # Capture frame-by-frame
+        time.sleep(1) 
         img = chrys.VideoLatestImage()
-        if img is  None:
-            break
-        else:
+        if img is not None:
             frame = img.data
             frame = imutils.resize(frame, width=400)
             # detect faces in the frame and determine if they are wearing a
             # face mask or not
             (locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
-            print (preds)
+
             # loop over the detected face locations and their corresponding locations
             for (box, pred) in zip(locs, preds):
             # unpack the bounding box and predictions
@@ -134,29 +136,14 @@ def gen_frames():  # generate frame by frame from camera
                 cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
                 cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
                 
-
+                if mask < withoutMask:
+                   cv2.imwrite('detections/Frame'+str(i)+'.jpg', frame)
+                   i += 1
+                
             # show the output frame
             #cv2.imshow("mask_detector", frame)
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
-                   
-                   
-@app.route('/video_feed')
-def video_feed():
-    #Video streaming route. Put this in the src attribute of an img tag
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    
-@app.route('/')
-def index():
-    """Video streaming home page."""
-    return render_template('index.html')
-
-if __name__ == "__main__":
-
-    
-    # arrancar servidor web
-    app.run(host='0.0.0.0', debug=True)
-    # initialize the video stream and allow the camera sensor to warm up
-    print("[INFO] starting video stream...")
+            key = cv2.waitKey(1) & 0xFF
+	
+            # if the `q` key was pressed, break from the loop
+            if key == ord("q"):
+                break

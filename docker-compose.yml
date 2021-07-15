@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:  
+  coviddetector:
+    container_name:  Utpl.Detector
+    image: utpl/cloudector:dev
+    build: 
+      context: .
+      dockerfile: Dockerfile    
+    tty: true
+    restart: unless-stopped
+    volumes:
+      - ./detections:/app/detections
+    privileged: false
+    networks:
+      - lojasoft.utpl
+    
+  covidportal:
+    image: utpl/cloudportal:dev
+    build: 
+      context: .
+      dockerfile: DockerfileWeb
+    container_name: Utpl.Portal
+    restart: unless-stopped
+    volumes:
+      - ./detections:/app/detections
+    command: [--auth]
+    ports:
+      - "5005:5000"
+    networks:
+      - lojasoft.utpl
+
+networks:
+  lojasoft.utpl:
+    external:
+      name: lojasoft.utpl
