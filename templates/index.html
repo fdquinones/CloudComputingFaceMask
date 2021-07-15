@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    <title>Live Streaming Demonstration</title>
+    <title>Utpl face mask detector</title>
 </head>
 <body>
 <div class="container">
@@ -19,6 +19,11 @@
 			<img src="{{ url_for('video_feed') }}" width="100%">
         </div>
     </div>
+	<div class="row">		
+		 {% for item in items %}
+		<img src="{{url_for('static', filename=item)}}" alt="{{item}}">
+		{% endfor %}
+	</div>
 </div>
 </body>
 </html>

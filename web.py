@@ -34,7 +34,9 @@ def video_feed():
 @app.route('/')
 def index():
     """Video streaming home page."""
-    return render_template('index.html')
+    items = os.listdir('static/detections')
+    hists = ['detections/' + file for file in items]
+    return render_template('index.html', items = items)
 
 
 if __name__ == '__main__':
