@@ -46,7 +46,7 @@
 	eventsRef.on('child_added', (data) => {
 			console.log("llegando evento en portal de utpl");
 			console.log(data.val());
-			console.log(data.key());
+			console.log(data.key);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
 
