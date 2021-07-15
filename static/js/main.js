@@ -49,9 +49,9 @@
 		console.log(data.key);
 		var val = data.val();
 		content += '<tr class="row100">';
-            content += '<td class="column100 column2" data-column="column1">' + val.fecha + '</td>';
-            content += '<td class="column100 column3" data-column="column2">' + val.cpu + '</td>';
-            content += '<td class="column100 column8" data-column="column3">' + val.image + '</td>';
+            content += '<td class="column100 column1" data-column="column1">' + new Date(val.fecha).toLocaleString() + '</td>';
+            content += '<td class="column100 column2" data-column="column2">' + val.cpu + ' mb</td>';
+            content += '<td class="column100 column3" data-column="column3">' + val.imagen + '</td>';
         content += '</tr>';
 		$('#tableData tbody').append(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
