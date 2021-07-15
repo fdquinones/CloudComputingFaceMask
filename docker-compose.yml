@@ -10,7 +10,7 @@ services:
     tty: true
     restart: unless-stopped
     volumes:
-      - ./detections:/app/detections
+      - ./detections:/utpl/detections
     privileged: false
     
   covidportal:
@@ -21,6 +21,6 @@ services:
     container_name: Utpl.Portal
     restart: unless-stopped
     volumes:
-      - ./detections:/utpl/detections
+      - ./detections:/app/detections
     ports:
       - "5005:5000"
