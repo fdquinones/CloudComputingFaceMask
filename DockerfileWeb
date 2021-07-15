@@ -1,4 +1,4 @@
-FROM python:3.7-alpine AS base
+FROM jjanzic/docker-python3-opencv AS base
 
 WORKDIR /app
 
@@ -8,9 +8,6 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 RUN python --version
 RUN ls
-RUN apk add --no-cache gcc musl-dev linux-headers
-RUN pip install opencv-python
-RUN pip install chrysalis
 RUN pip install Flask
 
 EXPOSE 5000
