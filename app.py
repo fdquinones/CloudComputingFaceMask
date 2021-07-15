@@ -10,6 +10,7 @@ import os
 import time
 import chrysalis
 import imutils
+import time
 
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -19,11 +20,26 @@ for device in gpu_devices:
 
 os.environ['DISPLAY'] = ":0"
 
-default_confidence = 0.5
+default_confidence = 0.8
 
 app = Flask(__name__)
 
+port = '6113'
+host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
+password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
+cert_path = 'chryscloud.cer'
+
+chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
+
+print("[INFO] loading face detector model...")
+prototxtPath ="deploy.prototxt"
+weightsPath = "res10_300x300_ssd_iter_140000.caffemodel"
+faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
+print("[INFO] loading face mask detector model...")
+maskNet = load_model("mask_detector.model")
+
 def detect_and_predict_mask(frame, faceNet, maskNet):
+    print("[INFO] ingreso al detector...")
     # grab the dimensions of the frame and then construct a blob
     # from it
     (h, w) = frame.shape[:2]
@@ -47,7 +63,9 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 
         # filter out weak detections by ensuring the confidence is
         # greater than the minimum confidence
-        if confidence > default_confidence:
+        if confidence > default_confidence:                    
+            print("[INFO] Se detecto rostro...")
+            print(confidence)
             # compute the (x, y)-coordinates of the bounding box for
             # the object
             box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
@@ -83,24 +101,42 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
     # locations
     return (locs, preds)
 
-def validate_param(param_name):
-    """
-    Validating OS environment variables
-
-    """
-    if param_name not in os.environ:
-        raise ValueError("missing environment variable " + param_name)
-    print("[INFO] PARAM_NAME:", param_name, "PARAM_VALUE: ", os.environ[param_name])
-    return os.environ[param_name]
-
 def gen_frames():  # generate frame by frame from camera
     while True:
+        time.sleep(1) # Sleep for 3 seconds
         # Capture frame-by-frame
         img = chrys.VideoLatestImage()
         if img is  None:
             break
-        else
+        else:
             frame = img.data
+            frame = imutils.resize(frame, width=400)
+            # detect faces in the frame and determine if they are wearing a
+            # face mask or not
+            (locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
+            print (preds)
+            # loop over the detected face locations and their corresponding locations
+            for (box, pred) in zip(locs, preds):
+            # unpack the bounding box and predictions
+                (startX, startY, endX, endY) = box
+                (mask, withoutMask) = pred
+
+                # determine the class label and color we'll use to draw
+                # the bounding box and text
+                label = "Mask" if mask > withoutMask else "No Mask"
+                color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
+
+                # include the probability in the label
+                label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
+
+                # display the label and bounding box rectangle on the output frame
+                cv2.putText(frame, label, (startX, startY - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+                cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+                
+
+            # show the output frame
+            #cv2.imshow("mask_detector", frame)
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -119,19 +155,6 @@ def index():
 
 if __name__ == "__main__":
 
-    port = '6113'
-    host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
-    password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
-    cert_path = 'chryscloud.cer'
-
-    chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
-
-    print("[INFO] loading face detector model...")
-    prototxtPath ="deploy.prototxt"
-    weightsPath = "res10_300x300_ssd_iter_140000.caffemodel"
-    faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
-    print("[INFO] loading face mask detector model...")
-    maskNet = load_model("mask_detector.model")
     
     # arrancar servidor web
     app.run(host='0.0.0.0', debug=True)
