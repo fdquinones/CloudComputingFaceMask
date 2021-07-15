@@ -137,6 +137,7 @@ if __name__ == "__main__":
                 cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
                 
                 if mask < withoutMask:
+                   print("[INFO] guardando imagen...")
                    cv2.imwrite('detections/Frame'+str(i)+'.jpg', frame)
                    i += 1
                 

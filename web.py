@@ -3,17 +3,21 @@ import cv2
 
 app = Flask(__name__)
 
-camera = cv2.VideoCapture('rtmp://casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com:1939/live/3bd1f4c906ff5851b516eb6cb22ff2a3')  # use 0 for web camera
-#  for cctv camera use rtsp://username:password@ip_address:554/user=username_password='password'_channel=channel_number_stream=0.sdp' instead of camera
-# for local webcam use cv2.VideoCapture(0)
+port = '6113'
+host = 'casabelen.monstrous-buildsergeant-3oljx.chrysvideo.com'
+password = 'bbcb9c9cd13a765ad6b83f996884eb3c'
+cert_path = 'chryscloud.cer'
+
+chrys = chrysalis.Connect(host=host, port=port, password=password, ssl_ca_cert=cert_path)
 
 def gen_frames():  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
-        success, frame = camera.read()  # read the camera frame
-        if not success:
+        img = chrys.VideoLatestImage()  # read the camera frame
+        if img is None:
             break
         else:
+            frame = img.data
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
