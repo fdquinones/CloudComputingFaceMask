@@ -21,6 +21,6 @@ services:
     container_name: Utpl.Portal
     restart: unless-stopped
     volumes:
-      - ./detections:/app/detections
+      - ./detections:/utpl/detections
     ports:
       - "5005:5000"
