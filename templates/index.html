@@ -40,9 +40,15 @@
 			</div>
 		</div>
 		<div class="row">		
-			 {% for item in items %}
-			<img src="{{url_for('static', filename=item)}}" alt="{{item}}">
-			{% endfor %}
+			<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+			  <div class="carousel-inner">
+				{% for item in items %}
+				<div class="carousel-item">
+					<img src="{{url_for('static', filename=item)}}" class="d-block w-100" alt="{{item}}">
+				</div>
+				{% endfor %}
+			  </div>
+			</div>
 		</div>
 	</div>
 </main>
