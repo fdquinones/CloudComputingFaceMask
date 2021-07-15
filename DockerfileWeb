@@ -8,6 +8,7 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 RUN python --version
 RUN ls
+RUN pip install chrysalis
 RUN pip install Flask
 
 EXPOSE 5000
