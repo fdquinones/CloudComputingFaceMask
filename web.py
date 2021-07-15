@@ -36,7 +36,7 @@ def video_feed():
 def index():
     """Video streaming home page."""
     items = os.listdir('static/detections')
-    hists = ['detections/' + file for file in items]
+    items = ['detections/' + file for file in items]
     return render_template('index.html', items = items)
 
 
