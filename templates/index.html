@@ -46,7 +46,7 @@
 			<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
 			  <div class="carousel-inner">
 				{% for item in items %}
-					{% if loop.index == 0 %}
+					{% if loop.first  %}
 						<div class="carousel-item active">
 							<img src="{{url_for('static', filename=item)}}" class="d-block w-100" alt="{{item}}">
 							<div class="carousel-caption d-none d-md-block">
