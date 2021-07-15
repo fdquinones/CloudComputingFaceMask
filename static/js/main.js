@@ -33,19 +33,27 @@
 	// Initialize Firebase
 	firebase.initializeApp(firebaseConfig);
 
-	var article = {
+	/*var article = {
 		'fecha': Date.now(),
 		'cpu': 50,
 		'imagen': 'hola.jpg',
 	}
 
-	firebase.database().ref('facemask/' + Date.now()).set(article);
+	firebase.database().ref('facemask/' + Date.now()).set(article);*/
 	
 	var eventsRef = firebase.database().ref('facemask');
 	eventsRef.on('child_added', (data) => {
-			console.log("llegando evento en portal de utpl");
-			console.log(data.val());
-			console.log(data.key);
+		console.log("llegando evento en portal de utpl");
+		var content = '';
+		console.log(data.val());
+		console.log(data.key);
+		var val = data.val();
+		content += '<tr class="row100">';
+            content += '<td class="column100 column2" data-column="column1">' + val.fecha + '</td>';
+            content += '<td class="column100 column3" data-column="column2">' + val.cpu + '</td>';
+            content += '<td class="column100 column8" data-column="column3">' + val.image + '</td>';
+        content += '</tr>';
+		$('#tableData tbody').append(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
 	
