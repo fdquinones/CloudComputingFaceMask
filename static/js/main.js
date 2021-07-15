@@ -1,7 +1,7 @@
 
 (function ($) {
 	"use strict";
-	$('.column100').on('mouseover',function(){
+	$('#tableData').on('mouseover', '.column100', function(){
 		var table1 = $(this).parent().parent().parent();
 		var table2 = $(this).parent().parent();
 		var verTable = $(table1).data('vertable')+"";
@@ -53,7 +53,7 @@
             content += '<td class="column100 column2" data-column="column2">' + val.cpu + ' mb</td>';
             content += '<td class="column100 column3" data-column="column3">' + val.imagen + '</td>';
         content += '</tr>';
-		$('#tableData tbody').append(content);
+		$('#tableData tr:first').before(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
 	
