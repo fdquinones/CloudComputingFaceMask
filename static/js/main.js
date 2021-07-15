@@ -55,6 +55,24 @@
 	}, (errorObject) => {
 	  console.log('The read failed: ' + errorObject.name);
 	});
+	
+	var database = firebase.database();
+	database.ref('facemask').once('value', function(snapshot) {
+        if (snapshot.exists()) {
+          var content = '';
+          snapshot.forEach(function(data) {
+            var val = data.val();
+            content += '<tr>';
+            content += '<td>' + val.firstName + '</td>';
+            content += '<td>' + val.lastName + '</td>';
+            content += '<td>' + val.cin + '</td>';
+            content += '<td>' + val.numTel + '</td>';
+            content += '<td>' + val.pw + '</td>';
+            content += '</tr>';
+          });
+          $('#ex-table').append(content);
+        }
+      });
 
 
 
