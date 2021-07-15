@@ -35,17 +35,18 @@
 
 	var article_id = 1;
 	var article = {
-		'fecha': firebase.firestore.FieldValue.serverTimestamp(),
+		'fecha': Date.now(),
 		'cpu': 50,
 		'imagen': 'hola.jpg',
 	}
 
 	firebase.database().ref('facemask/' + article_id).set(article);
 	
-	var eventsRef = firebase.database().ref('facemask/');
-		eventsRef.on('child_added', (data) => {
+	var eventsRef = firebase.database().ref('facemask');
+	eventsRef.on('child_added', (data) => {
 			console.log("llegando evento en portal de utpl");
-			console.log(data);
+			console.log(data.val());
+			console.log(data.key());
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
 
