@@ -48,6 +48,14 @@
 			console.log(data.key);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
+	
+	// Attach an asynchronous callback to read the data at our posts reference
+	eventsRef.on('value', (snapshot) => {
+	  console.log(snapshot.val());
+	}, (errorObject) => {
+	  console.log('The read failed: ' + errorObject.name);
+	});
+
 
 
     
