@@ -12,8 +12,6 @@ services:
     volumes:
       - ./detections:/app/detections
     privileged: false
-    networks:
-      - lojasoft.utpl
     
   covidportal:
     image: utpl/cloudportal:dev
@@ -27,8 +25,3 @@ services:
     command: [--auth]
     ports:
       - "5005:5000"
-    networks:
-      - lojasoft.utpl
-
-networks:
-  lojasoft.utpl
