@@ -31,6 +31,4 @@ services:
       - lojasoft.utpl
 
 networks:
-  lojasoft.utpl:
-    external:
-      name: lojasoft.utpl
+  lojasoft.utpl
