@@ -33,14 +33,13 @@
 	// Initialize Firebase
 	firebase.initializeApp(firebaseConfig);
 
-	var article_id = 1;
 	var article = {
 		'fecha': Date.now(),
 		'cpu': 50,
 		'imagen': 'hola.jpg',
 	}
 
-	firebase.database().ref('facemask/' + article_id).set(article);
+	firebase.database().ref('facemask/' + Date.now()).set(article);
 	
 	var eventsRef = firebase.database().ref('facemask');
 	eventsRef.on('child_added', (data) => {
