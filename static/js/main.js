@@ -11,7 +11,7 @@
 		$(table1).find(".row100.head ."+column).addClass('hov-column-head-'+ verTable);
 	});
 
-	$('.column100').on('mouseout',function(){
+	$('#tableData').on('mouseout', '.column100',function(){
 		var table1 = $(this).parent().parent().parent();
 		var table2 = $(this).parent().parent();
 		var verTable = $(table1).data('vertable')+"";
@@ -53,12 +53,13 @@
             content += '<td class="column100 column2" data-column="column2">' + val.cpu + ' mb</td>';
             content += '<td class="column100 column3" data-column="column3">' + val.imagen + '</td>';
         content += '</tr>';
-		$('#tableData tr:first').before(content);
+		$('#tableData tbody tr:first').before(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
 	});
 	
 	// Attach an asynchronous callback to read the data at our posts reference
 	eventsRef.on('value', (snapshot) => {
+	  console.log('hola   .. .');
 	  console.log(snapshot.val());
 	}, (errorObject) => {
 	  console.log('The read failed: ' + errorObject.name);
@@ -66,6 +67,7 @@
 	
 	var database = firebase.database();
 	database.ref('facemask').once('value', function(snapshot) {
+		console.log('hello   .. .');
         if (snapshot.exists()) {
           var content = '';
           snapshot.forEach(function(data) {
