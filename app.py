@@ -8,6 +8,11 @@ import cv2
 import os
 import time
 import chrysalis
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+from datetime import timezone
+import datetime
 
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -18,6 +23,11 @@ for device in gpu_devices:
 os.environ['DISPLAY'] = ":0"
 
 default_confidence = 0.5
+
+# Fetch the service account key JSON file contents
+cred = credentials.Certificate('utplcovid-firebase-adminsdk-ytv22-cd40c21acc.json')
+# Initialize the app with a service account, granting admin privileges
+firebase_admin.initialize_app(cred)
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
     # grab the dimensions of the frame and then construct a blob
@@ -138,7 +148,22 @@ if __name__ == "__main__":
                 
                 if mask < withoutMask:
                    print("[INFO] guardando imagen...")
-                   cv2.imwrite('detections/Frame'+str(i)+'.jpg', frame)
+                   imgName = 'detections/Frame'+str(i)+'.jpg'
+                   cv2.imwrite(imgName, frame)
+                   
+                   # Getting the current date
+                   # and time
+                   dt = datetime.datetime.now(timezone.utc)
+                      
+                   utc_time = dt.replace(tzinfo=timezone.utc)
+                   utc_timestamp = utc_time.timestamp()
+                   
+                   ref = db.reference('boxes')
+                   ref.push({
+                        'fecha': utc_timestamp,
+                        'cpu': 7,
+                        'imagen': imgName
+                   })
                    i += 1
                 
             # show the output frame
