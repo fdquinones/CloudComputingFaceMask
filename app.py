@@ -27,7 +27,9 @@ default_confidence = 0.5
 # Fetch the service account key JSON file contents
 cred = credentials.Certificate('utplcovid-firebase-adminsdk-ytv22-cd40c21acc.json')
 # Initialize the app with a service account, granting admin privileges
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred,  {
+    'databaseURL': 'https://utplcovid-default-rtdb.firebaseio.com/'
+})
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
     # grab the dimensions of the frame and then construct a blob
@@ -158,7 +160,7 @@ if __name__ == "__main__":
                    utc_time = dt.replace(tzinfo=timezone.utc)
                    utc_timestamp = utc_time.timestamp()
                    
-                   ref = db.reference('boxes')
+                   ref = db.reference('facemask')
                    ref.push({
                         'fecha': utc_timestamp,
                         'cpu': 7,
