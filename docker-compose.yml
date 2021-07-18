@@ -15,10 +15,7 @@ services:
 
   coviddecoder:
     container_name:  Utpl.Decoder
-    image: utpl/decoder:dev
-    build: 
-      context: .
-      dockerfile: DockerfileDecoder    
+    image: utpl/decoder:dev   
     tty: true
     restart: unless-stopped
     privileged: false
