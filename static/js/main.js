@@ -1,9 +1,10 @@
 
 (function ($) {
 	"use strict";
-	var url = "ws://78.46.225.138:4452";
+	var url = "ws://erp.lojasoftsolutions.com.ec:4452";
 	var canvas = document.getElementById('video-canvas');
 	var player = new JSMpeg.Player(url, {canvas: canvas});
+	//player.play();
 
 	$('#tableData').on('mouseover', '.column100', function(){
 		var table1 = $(this).parent().parent().parent();
