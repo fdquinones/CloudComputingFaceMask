@@ -169,7 +169,7 @@ if __name__ == "__main__":
                    i += 1
                 
             # show the output frame
-            #cv2.imshow("mask_detector", frame)
+            cv2.imshow("mask_detector", frame)
             key = cv2.waitKey(1) & 0xFF
 	
             # if the `q` key was pressed, break from the loop

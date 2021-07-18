@@ -2,7 +2,7 @@ FROM jjanzic/docker-python3-opencv AS base
 
 WORKDIR /app
 
-ENV FLASK_APP=web.py
+ENV FLASK_APP=webV2.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 
