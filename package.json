@@ -1,0 +1,23 @@
+{
+  "name": "cloudcomputingfacemask",
+  "version": "1.0.0",
+  "description": "Proyecto de maestria utpl",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fdquinones/CloudComputingFaceMask.git"
+  },
+  "author": "fdquinones",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fdquinones/CloudComputingFaceMask/issues"
+  },
+  "homepage": "https://github.com/fdquinones/CloudComputingFaceMask#readme",
+  "dependencies": {
+    "node-rtsp-stream-jsmpeg": "^0.0.2"
+  }
+}

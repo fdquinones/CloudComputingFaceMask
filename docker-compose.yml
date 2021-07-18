@@ -12,6 +12,18 @@ services:
     volumes:
       - ./detections:/utpl/detections
     privileged: false
+
+  coviddecoder:
+    container_name:  Utpl.Decoder
+    image: utpl/decoder:dev
+    build: 
+      context: .
+      dockerfile: DockerfileDecoder    
+    tty: true
+    restart: unless-stopped
+    privileged: false
+    ports:
+      - "4452:3333"
     
   covidportal:
     image: utpl/cloudportal:dev
