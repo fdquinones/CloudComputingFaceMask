@@ -1,7 +1,7 @@
 
 (function ($) {
 	"use strict";
-	var url = "ws://erp.lojasoftsolutions.com.ec:4452";
+	var url = "wss://covidutpl.tk/camera";
 	var canvas = document.getElementById('video-canvas');
 	var player = new JSMpeg.Player(url, {canvas: canvas});
 	//player.play();
