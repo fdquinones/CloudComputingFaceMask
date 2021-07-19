@@ -15,6 +15,7 @@ from datetime import timezone
 import datetime
 # import module sys to get the type of exception
 import sys
+import psutil
 
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -121,13 +122,20 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_s
                     imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
                     cv2.imwrite(imgName, sub_face)
                     ref = db.reference('facemask')
+                    virtualM = psutil.virtual_memory()
+                    virtualMemoryT = virtualM.total >> 30
                     ref.push({
                         'fecha': datetime.datetime.now().astimezone().isoformat(),
-                        'cpu': 7,
-                        'imagen': imgName
+                        'cpuP': psutil.cpu_percent(interval=1),
+                        'virtualMemoryT': virtualMemoryT,
+                        'virtualMemoryP': virtualM.percent,
+                        'virtualMemory': virtualM.used >> 30,
+                        'imagen': imgName,
+                        'nodo': 'CLOUD_DECODER'
                     })
-                except:
+                except Exception as e:
                     print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
+                    print(e)
                     break
 
         else:
