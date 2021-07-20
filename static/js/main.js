@@ -68,7 +68,8 @@
 			content += '<td class="column100 column4" data-column="column4">' + val.virtualMemory + ' </td>';
 			content += '<td class="column100 column5" data-column="column5">' + val.virtualMemoryP + ' </td>';
 			content += '<td class="column100 column6" data-column="column6">' + val.label + ' </td>';
-            content += '<td class="column100 column7 data" data-column="column7">' + val.imagen + '</td>';
+			content += '<td class="column100 column7" data-column="column7">' + val.prediction.toFixed(2) + ' </td>';
+            content += '<td class="column100 column8 data" data-column="column8">' + val.imagen + '</td>';
         	content += '</tr>';
 			$('#tableData tbody tr:first').before(content);
 		}

@@ -124,7 +124,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
                 try:
                     print("[INFO] guardando imagen...", datetime.datetime.now().astimezone().isoformat())
                     sub_face = img[start_y-sceneExtra:end_y+sceneExtra, start_x-sceneExtra:end_x+sceneExtra]
-                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S.%f")+ '.jpg'
+                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
                     cv2.imwrite(imgName, sub_face)
                     virtualM = psutil.virtual_memory()
                     refDatabase.push({
@@ -181,7 +181,7 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
                 # Detect faces in the frame and determine if they are wearing a face mask or not
                 detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
                 # Activar en pruebas esta linea para mostrar las detecciones
-                #cv2.imshow('Frame', frame)
+                cv2.imshow('Frame', frame)
             c += 1  
             
             
