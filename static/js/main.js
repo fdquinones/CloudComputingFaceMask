@@ -65,7 +65,8 @@
 			content += '<td class="column100 column3" data-column="column3">' + val.virtualMemoryT + '</td>';
 			content += '<td class="column100 column4" data-column="column4">' + val.virtualMemory + ' </td>';
 			content += '<td class="column100 column5" data-column="column5">' + val.virtualMemoryP + ' </td>';
-            content += '<td class="column100 column6 data" data-column="column6">' + val.imagen + '</td>';
+			content += '<td class="column100 column6" data-column="column6">' + val.label + ' </td>';
+            content += '<td class="column100 column7 data" data-column="column7">' + val.imagen + '</td>';
         content += '</tr>';
 		$('#tableData tbody tr:first').before(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);

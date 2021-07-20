@@ -34,7 +34,9 @@ firebase_admin.initialize_app(cred,  {
     'databaseURL': 'https://utplcovid-default-rtdb.firebaseio.com/'
 })
 
-def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_show=False):
+
+
+def detect_mask(img, face_detector, mask_detector, confidence_threshold, refDatabase, image_show=False):
     # Initialize the labels and colors for bounding boxes
     num_class = mask_detector.layers[-1].get_output_at(0).get_shape()[-1]
     labels, colors = None, None
@@ -119,17 +121,17 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_s
                 try:
                     print("[INFO] guardando imagen...", datetime.datetime.now().astimezone().isoformat())
                     sub_face = img[start_y-sceneExtra:end_y+sceneExtra, start_x-sceneExtra:end_x+sceneExtra]
-                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
+                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S_%f")+ '.jpg'
                     cv2.imwrite(imgName, sub_face)
-                    ref = db.reference('facemask')
                     virtualM = psutil.virtual_memory()
-                    virtualMemoryT = virtualM.total >> 30
-                    ref.push({
+                    refDatabase.push({
                         'fecha': datetime.datetime.now().astimezone().isoformat(),
                         'cpuP': psutil.cpu_percent(interval=1),
-                        'virtualMemoryT': virtualMemoryT,
+                        'virtualMemoryT': virtualM.total >> 30,
                         'virtualMemoryP': virtualM.percent,
                         'virtualMemory': virtualM.used >> 30,
+                        'status': status,
+                        'label': label,
                         'imagen': imgName,
                         'nodo': 'CLOUD_DECODER'
                     })
@@ -144,7 +146,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_s
     return status, img
 
 
-def process_captured_video(camera, faceDetector, maskDetector, confidenceThreshold):
+def process_captured_video(camera, faceDetector, maskDetector, confidenceThreshold, refDatabase):
     
     c = 1
     frameRate = 15 # Frame number interception interval (one frame is intercepted every 100 frames)
@@ -158,8 +160,21 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
         else:
             if(c % frameRate == 0):
                 print("Start to capture video:" + str(c) + "frame")
+                #Monitorear el procesamiento
+                virtualM = psutil.virtual_memory()
+                refDatabase.push({
+                    'fecha': datetime.datetime.now().astimezone().isoformat(),
+                    'cpuP': psutil.cpu_percent(interval=1),
+                    'virtualMemoryT': virtualM.total >> 30,
+                    'virtualMemoryP': virtualM.percent,
+                    'virtualMemory': virtualM.used >> 30,
+                    'status': '-1',
+                    'label': '',
+                    'imagen': '',
+                    'nodo': 'CLOUD_DECODER'
+                })
                 # Detect faces in the frame and determine if they are wearing a face mask or not
-                detect_mask(frame, faceDetector, maskDetector, confidenceThreshold)
+                detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
                 # Activar en pruebas esta linea para mostrar las detecciones
                 #cv2.imshow('Frame', frame)
             c += 1  
@@ -184,12 +199,16 @@ if __name__ == "__main__":
     # initialize the video stream and allow the camera sensor to warm up
     print("[INFO] starting video stream...")
 
+    # initialize database
+    refDatabase = db.reference('facemask')
+    print("[INFO] starting reference database")
+
     while True:
         print("[INFO] Tratando de conectar...")
         capture = cv2.VideoCapture("rtsp://159.69.217.242:9665/mystream")
         if capture.isOpened():
             print("[INFO] Conexion correcta a camara...")
-            response = process_captured_video(capture, faceNet, maskNet, 0.7)
+            response = process_captured_video(capture, faceNet, maskNet, 0.7, refDatabase)
             if not response :
                 time.sleep(10)
                 continue
@@ -200,86 +219,3 @@ if __name__ == "__main__":
             capture.release()
             cv2.destroyAllWindows()
             continue
-    
-    # Loop over the frames from the video stream
-    while True:
-        # Grab the frame from the threaded video stream and resize it to have a maximum width of 400 pixels
-        success, frame = capture.read()
-
-        if  success:
-            # Show the output frame
-            cv2.imshow("Frame", frame)
-        else:
-            print("[ERROR] Tratando de reconectar...")
-            time.sleep(3)
-        
-        # Detect faces in the frame and determine if they are wearing a face mask or not
-        #detect_mask(frame, face_detector, mask_detector, confidence_threshold)
-
-       
-        key = cv2.waitKey(1) & 0xFF
-
-        # If the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
-
-    capture.release()
-    cv2.destroyAllWindows()
-    i = 0
-    '''
-    while True:
-        img = chrys.VideoLatestImage()
-        if img is not None:
-            frame = img.data
-            frame = imutils.resize(frame, width=400)
-            # detect faces in the frame and determine if they are wearing a
-            # face mask or not
-            (locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
-
-            # loop over the detected face locations and their corresponding locations
-            for (box, pred) in zip(locs, preds):
-            # unpack the bounding box and predictions
-                (startX, startY, endX, endY) = box
-                (mask, withoutMask) = pred
-
-                # determine the class label and color we'll use to draw
-                # the bounding box and text
-                label = "Mask" if mask > withoutMask else "No Mask"
-                color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
-
-                # include the probability in the label
-                label = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
-
-                # display the label and bounding box rectangle on the output frame
-                cv2.putText(frame, label, (startX, startY - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-                cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-                
-                if mask < withoutMask:
-                   print("[INFO] guardando imagen...")
-                   imgName = 'detections/Frame'+str(i)+'.jpg'
-                   cv2.imwrite(imgName, frame)
-                   
-                   # Getting the current date
-                   # and time
-                   dt = datetime.datetime.now(timezone.utc)
-                      
-                   utc_time = dt.replace(tzinfo=timezone.utc)
-                   utc_timestamp = utc_time.timestamp()
-                   
-                   ref = db.reference('facemask')
-                   ref.push({
-                        'fecha': utc_timestamp,
-                        'cpu': 7,
-                        'imagen': imgName
-                   })
-                   i += 1
-                
-            # show the output frame
-            cv2.imshow("mask_detector", frame)
-            key = cv2.waitKey(1) & 0xFF
-	
-            # if the `q` key was pressed, break from the loop
-            if key == ord("q"):
-                break
-    '''
