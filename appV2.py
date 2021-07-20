@@ -181,7 +181,7 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
                 # Detect faces in the frame and determine if they are wearing a face mask or not
                 detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
                 # Activar en pruebas esta linea para mostrar las detecciones
-                cv2.imshow('Frame', frame)
+                #cv2.imshow('Frame', frame)
             c += 1  
             
             
