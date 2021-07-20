@@ -60,7 +60,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_s
     # MFN: 0 is "mask correctly" and 1 is "no mask"
     # RMFD: 0 is "mask correctly", 1 is "mask incorrectly", and 2 is "no mask"
     status = 0
-    sceneExtra = 40
+    sceneExtra = 50
 
     # Loop over the detections
     for i in range(0, detections.shape[2]):
@@ -115,7 +115,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, image_s
             cv2.rectangle(img, (start_x, start_y), (end_x, end_y), color, 2)
             print("[INFO] Status detection: " + str(status) + " - label: " + label)
 
-            if status > 0:
+            if status >= 0:
                 try:
                     print("[INFO] guardando imagen...", datetime.datetime.now().astimezone().isoformat())
                     sub_face = img[start_y-sceneExtra:end_y+sceneExtra, start_x-sceneExtra:end_x+sceneExtra]
@@ -160,7 +160,8 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
                 print("Start to capture video:" + str(c) + "frame")
                 # Detect faces in the frame and determine if they are wearing a face mask or not
                 detect_mask(frame, faceDetector, maskDetector, confidenceThreshold)
-                cv2.imshow('Frame', frame)
+                # Activar en pruebas esta linea para mostrar las detecciones
+                #cv2.imshow('Frame', frame)
             c += 1  
             
             
