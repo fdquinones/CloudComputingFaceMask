@@ -211,7 +211,7 @@ if __name__ == "__main__":
         capture = cv2.VideoCapture("rtsp://159.69.217.242:9665/mystream")
         if capture.isOpened():
             print("[INFO] Conexion correcta a camara...")
-            response = process_captured_video(capture, faceNet, maskNet, 0.7, refDatabase)
+            response = process_captured_video(capture, faceNet, maskNet, 0.5, refDatabase)
             if not response :
                 time.sleep(10)
                 continue
