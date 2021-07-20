@@ -16,4 +16,4 @@ RUN pip install firebase_admin
 RUN pip install psutil
 
 
-CMD [ "python", "app.py"]
+CMD [ "python", "appV2.py"]
