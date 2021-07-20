@@ -162,27 +162,25 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
             camera.release()
             return False
         else:
-            if(c % frameRate == 0):
-                print("Start to capture video:" + str(c) + "frame")
-                #Monitorear el procesamiento
-                virtualM = psutil.virtual_memory()
-                refDatabase.push({
-                    'fecha': datetime.datetime.now().astimezone().isoformat(),
-                    'cpuP': psutil.cpu_percent(interval=1),
-                    'virtualMemoryT': virtualM.total >> 30,
-                    'virtualMemoryP': virtualM.percent,
-                    'virtualMemory': virtualM.used >> 30,
-                    'status': '-1',
-                    'label': '',
-                    'prediction': '',
-                    'imagen': '',
-                    'nodo': 'CLOUD_DECODER'
-                })
-                # Detect faces in the frame and determine if they are wearing a face mask or not
-                detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
-                # Activar en pruebas esta linea para mostrar las detecciones
-                #cv2.imshow('Frame', frame)
-            c += 1  
+            print("Start to capture video:" + str(c) + "frame")
+            #Monitorear el procesamiento
+            virtualM = psutil.virtual_memory()
+            refDatabase.push({
+                'fecha': datetime.datetime.now().astimezone().isoformat(),
+                'cpuP': psutil.cpu_percent(interval=1),
+                'virtualMemoryT': virtualM.total >> 30,
+                'virtualMemoryP': virtualM.percent,
+                'virtualMemory': virtualM.used >> 30,
+                'status': '-1',
+                'label': '',
+                'prediction': '',
+                'imagen': '',
+                'nodo': 'CLOUD_DECODER'
+            })
+            # Detect faces in the frame and determine if they are wearing a face mask or not
+            detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
+            # Activar en pruebas esta linea para mostrar las detecciones
+            #cv2.imshow('Frame', frame)
             
             
 
