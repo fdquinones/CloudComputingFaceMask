@@ -59,7 +59,9 @@
 		console.log(data.val());
 		console.log(data.key);
 		var val = data.val();
-		content += '<tr class="row100 infoRow">';
+
+		if(val.label){
+			content += '<tr class="row100 infoRow">';
             content += '<td class="column100 column1" data-column="column1">' + new Date(val.fecha).toLocaleString() + '</td>';
             content += '<td class="column100 column2" data-column="column2">' + val.cpuP + '</td>';
 			content += '<td class="column100 column3" data-column="column3">' + val.virtualMemoryT + '</td>';
@@ -67,9 +69,9 @@
 			content += '<td class="column100 column5" data-column="column5">' + val.virtualMemoryP + ' </td>';
 			content += '<td class="column100 column6" data-column="column6">' + val.label + ' </td>';
             content += '<td class="column100 column7 data" data-column="column7">' + val.imagen + '</td>';
-        content += '</tr>';
-		$('#tableData tbody tr:first').before(content);
-		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
+        	content += '</tr>';
+			$('#tableData tbody tr:first').before(content);
+		}
 	});
 	
 	// Attach an asynchronous callback to read the data at our posts reference

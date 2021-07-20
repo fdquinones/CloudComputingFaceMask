@@ -97,6 +97,8 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
             label = labels[label_idx]
             color = colors[label_idx]
 
+            labelTxt = label
+
             # Update the status
             if num_class == 3:
                 if label_idx == 0:
@@ -110,7 +112,8 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
                 status = max(status, label_idx)
 
             # Include the probability in the label
-            label = "{}: {:.2f}%".format(label, max(prediction) * 100)
+            predectionP = max(prediction) * 100
+            label = "{}: {:.2f}%".format(label, predectionP)
 
             # Display the label and bounding box rectangle on the output frame
             cv2.putText(img, label, (start_x, start_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
@@ -121,7 +124,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
                 try:
                     print("[INFO] guardando imagen...", datetime.datetime.now().astimezone().isoformat())
                     sub_face = img[start_y-sceneExtra:end_y+sceneExtra, start_x-sceneExtra:end_x+sceneExtra]
-                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S_%f")+ '.jpg'
+                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S.%f")+ '.jpg'
                     cv2.imwrite(imgName, sub_face)
                     virtualM = psutil.virtual_memory()
                     refDatabase.push({
@@ -131,7 +134,8 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
                         'virtualMemoryP': virtualM.percent,
                         'virtualMemory': virtualM.used >> 30,
                         'status': status,
-                        'label': label,
+                        'label': labelTxt,
+                        'prediction': predectionP,
                         'imagen': imgName,
                         'nodo': 'CLOUD_DECODER'
                     })
@@ -170,6 +174,7 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
                     'virtualMemory': virtualM.used >> 30,
                     'status': '-1',
                     'label': '',
+                    'prediction': '',
                     'imagen': '',
                     'nodo': 'CLOUD_DECODER'
                 })
