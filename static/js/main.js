@@ -16,6 +16,12 @@
 		$(table1).find(".row100.head ."+column).addClass('hov-column-head-'+ verTable);
 	});
 
+	//cambiar la imagen dinamicamente
+	$('#tableData').on('mouseover', '.row100.infoRow', function(){
+		var pathImage = $(this).closest('tr').children('td.data').text();
+		$("#imgDetection").attr("src","static/" + pathImage);
+	});
+
 	$('#tableData').on('mouseout', '.column100',function(){
 		var table1 = $(this).parent().parent().parent();
 		var table2 = $(this).parent().parent();
@@ -53,10 +59,13 @@
 		console.log(data.val());
 		console.log(data.key);
 		var val = data.val();
-		content += '<tr class="row100">';
+		content += '<tr class="row100 infoRow">';
             content += '<td class="column100 column1" data-column="column1">' + new Date(val.fecha).toLocaleString() + '</td>';
-            content += '<td class="column100 column2" data-column="column2">' + val.cpu + ' mb</td>';
-            content += '<td class="column100 column3" data-column="column3">' + val.imagen + '</td>';
+            content += '<td class="column100 column2" data-column="column2">' + val.cpuP + '</td>';
+			content += '<td class="column100 column3" data-column="column3">' + val.virtualMemoryT + '</td>';
+			content += '<td class="column100 column4" data-column="column4">' + val.virtualMemory + ' </td>';
+			content += '<td class="column100 column5" data-column="column5">' + val.virtualMemoryP + ' </td>';
+            content += '<td class="column100 column6 data" data-column="column6">' + val.imagen + '</td>';
         content += '</tr>';
 		$('#tableData tbody tr:first').before(content);
 		//addCommentElement(postElement, data.key, data.val().text, data.val().author);
