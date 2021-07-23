@@ -7,20 +7,22 @@ import imutils
 import cv2
 import os
 import time
-import chrysalis
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-from datetime import timezone
 import datetime
 # import module sys to get the type of exception
 import sys
 import psutil
 
+print("imprimiendo la version de cv2")
+print(cv2.__version__)
+
 # issue for RTX GPU: https://github.com/tensorflow/tensorflow/issues/24496
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 gpu_devices = tf.config.experimental.list_physical_devices("GPU")
 for device in gpu_devices:
+    print("GPU encontrada")
     tf.config.experimental.set_memory_growth(device, True)
 
 os.environ['DISPLAY'] = ":0"
@@ -153,7 +155,7 @@ def detect_mask(img, face_detector, mask_detector, confidence_threshold, refData
 def process_captured_video(camera, faceDetector, maskDetector, confidenceThreshold, refDatabase):
     
     c = 1
-    frameRate = 15 # Frame number interception interval (one frame is intercepted every 100 frames)
+    frameRate = 7 # Frame number interception interval (one frame is intercepted every 100 frames)
 
     while True:
         success, frame = camera.read()
@@ -162,25 +164,27 @@ def process_captured_video(camera, faceDetector, maskDetector, confidenceThresho
             camera.release()
             return False
         else:
-            print("Start to capture video:" + str(c) + "frame")
-            #Monitorear el procesamiento
-            virtualM = psutil.virtual_memory()
-            refDatabase.push({
-                'fecha': datetime.datetime.now().astimezone().isoformat(),
-                'cpuP': psutil.cpu_percent(interval=1),
-                'virtualMemoryT': virtualM.total >> 30,
-                'virtualMemoryP': virtualM.percent,
-                'virtualMemory': virtualM.used >> 30,
-                'status': '-1',
-                'label': '',
-                'prediction': '',
-                'imagen': '',
-                'nodo': 'CLOUD_DECODER'
-            })
-            # Detect faces in the frame and determine if they are wearing a face mask or not
-            detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
+            if(c % frameRate == 0):
+                print("Start to capture video:" + str(c) + "frame")
+                #Monitorear el procesamiento
+                ''''virtualM = psutil.virtual_memory()
+                refDatabase.push({
+                    'fecha': datetime.datetime.now().astimezone().isoformat(),
+                    'cpuP': psutil.cpu_percent(interval=1),
+                    'virtualMemoryT': virtualM.total >> 30,
+                    'virtualMemoryP': virtualM.percent,
+                    'virtualMemory': virtualM.used >> 30,
+                    'status': '-1',
+                    'label': '',
+                    'prediction': '',
+                    'imagen': '',
+                    'nodo': 'CLOUD_DECODER'
+                })'''
+                # Detect faces in the frame and determine if they are wearing a face mask or not
+                detect_mask(frame, faceDetector, maskDetector, confidenceThreshold, refDatabase)
             # Activar en pruebas esta linea para mostrar las detecciones
-            #cv2.imshow('Frame', frame)
+            cv2.imshow('Frame', frame)    
+            c += 1  
             
             
 
@@ -211,7 +215,7 @@ if __name__ == "__main__":
         capture = cv2.VideoCapture("rtsp://159.69.217.242:9665/mystream")
         if capture.isOpened():
             print("[INFO] Conexion correcta a camara...")
-            response = process_captured_video(capture, faceNet, maskNet, 0.5, refDatabase)
+            response = process_captured_video(capture, faceNet, maskNet, 0.7, refDatabase)
             if not response :
                 time.sleep(10)
                 continue
