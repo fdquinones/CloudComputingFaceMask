@@ -55,6 +55,7 @@ while True:
     except RuntimeError as e:
         print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
         print(e)
+        time.sleep(5)
 
 #Inicia el flujo de lectura
 stream.start()
@@ -141,10 +142,15 @@ while True:
             text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
             cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 0.5, color, 2)
-
-            print("[INFO] guardando imagen...")
-            imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
-            cv2.imwrite(imgName, frame)
+                
+            try:
+                print("[INFO] guardando imagen...")
+                imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
+                cv2.imwrite(imgName, frame)
+            except Exception as e:
+                print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
+                print(e)
+                continue
 
     fps.update()
     
