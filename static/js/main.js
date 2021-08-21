@@ -36,6 +36,7 @@
 	var firebaseConfig = {
 		apiKey: "AIzaSyBNXxTi201phes4B24moqj_bUIAZvo8cbw",
 		authDomain: "utplcovid.firebaseapp.com",
+		databaseURL: "https://utplcovid-default-rtdb.firebaseio.com",
 		projectId: "utplcovid",
 		storageBucket: "utplcovid.appspot.com",
 		messagingSenderId: "1052404064289",

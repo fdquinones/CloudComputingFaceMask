@@ -6,6 +6,11 @@ import os
 import numpy as np
 from imutils.video import FPS
 from vidgear.gears import CamGear
+from firebase_admin import credentials
+from firebase_admin import db
+import firebase_admin
+import psutil
+import datetime
 
 #Configuracion del modelo
 INPUT_FILE = os.getenv('INPUTFILE', 'rtsp://192.168.0.100:5540/ch0')
@@ -44,7 +49,19 @@ print(ln)
 
 # formatting parameters as dictionary attributes
 #options = {"CAP_PROP_FRAME_WIDTH":416, "CAP_PROP_FRAME_HEIGHT":416, "CAP_PROP_FPS":15}
-options = {"CAP_PROP_FPS":15}
+options = {"CAP_PROP_FPS":5}
+
+
+#INICIALIZAR LA BASE DE DATOS
+cred = credentials.Certificate('utplcovid-firebase-adminsdk-ytv22-cd40c21acc.json')
+# Initialize the app with a service account, granting admin privileges
+firebase_admin.initialize_app(cred,  {
+    'databaseURL': 'https://utplcovid-default-rtdb.firebaseio.com/'
+})
+
+ # initialize database
+refDatabase = db.reference('facemask')
+print("[INFO] starting reference database")
 
 # Open suitable video stream, such as webcam on first index(i.e. 0)
 while True:
@@ -139,14 +156,32 @@ while True:
             color = [int(c) for c in COLORS[classIDs[i]]]
 
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-            text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
+            labelMask = LABELS[classIDs[i]]
+            prediction = confidences[i]
+            text = "{}: {:.4f}".format(labelMask, prediction)
             cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 0.5, color, 2)
-                
+
             try:
                 print("[INFO] guardando imagen...")
                 imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
                 cv2.imwrite(imgName, frame)
+
+                timeTimePublish = time.time()
+                virtualM = psutil.virtual_memory()
+                refDatabase.push({
+                    'fecha': datetime.datetime.now().astimezone().isoformat(),
+                    'cpuP': psutil.cpu_percent(interval=1),
+                    'virtualMemoryT': virtualM.total >> 30,
+                    'virtualMemoryP': virtualM.percent,
+                    'virtualMemory': virtualM.used >> 30,
+                    'status': 1,
+                    'label': labelMask,
+                    'prediction': prediction,
+                    'imagen': imgName,
+                    'nodo': 'CLOUD_DECODER'
+                })
+                print("cost time publish:{}".format(time.time() - timeTimePublish))
             except Exception as e:
                 print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
                 print(e)
