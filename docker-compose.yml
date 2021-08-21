@@ -4,6 +4,9 @@ services:
   coviddetector:
     container_name:  Utpl.Detector
     image: utpl/cloudector:dev
+    environment:
+      - INPUTFILE=rtsp://159.69.217.242:9665/mystream
+      - SHOW_IMAGE=False
     build: 
       context: .
       dockerfile: Dockerfile    
