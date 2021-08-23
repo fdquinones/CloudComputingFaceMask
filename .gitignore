@@ -1,3 +1,4 @@
 /detections
 /node_modules
+__pycache__
 /static/detections
