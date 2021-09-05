@@ -112,7 +112,7 @@ async def main():
 
     # formatting parameters as dictionary attributes
     #options = {"CAP_PROP_FRAME_WIDTH":416, "CAP_PROP_FRAME_HEIGHT":416, "CAP_PROP_FPS":15}
-    options = {"CAP_PROP_FPS":5}
+    options = {"CAP_PROP_FPS":30}
 
 
     #INICIALIZAR LA BASE DE DATOS
@@ -125,6 +125,10 @@ async def main():
     # initialize database
     refDatabase = db.reference('facemask')
     print("[INFO] starting reference database")
+
+    #Defincion de frame para procesar
+    c = 1
+    frameRate = 30 # Frame number interception interval (one frame is intercepted every 100 frames)
 
     # Open suitable video stream, such as webcam on first index(i.e. 0)
     while True:
@@ -155,94 +159,95 @@ async def main():
         # check for frame if Nonetype
         if frame is None:
             break
+        
+        if(c % frameRate == 0):
+            print("ingreso a procesar")
+            # {do something with the frame here}
+            time_time = time.time()
+            blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+            net.setInput(blob)
+            if W is None or H is None:
+                (H, W) = frame.shape[:2]
+            layerOutputs = net.forward(ln)
+            #print(layerOutputs)
+            print("cost time:{}".format(time.time() - time_time))
+                
+            # initialize our lists of detected bounding boxes, confidences, and
+            # class IDs, respectively
+            boxes = []
+            confidences = []
+            classIDs = []
 
+            # loop over each of the layer outputs
+            for output in layerOutputs:
+                # loop over each of the detections
+                for detection in output:
+                    # extract the class ID and confidence (i.e., probability) of
+                    # the current object detection
+                    scores = detection[5:]
+                    classID = np.argmax(scores)
+                    confidence = scores[classID]
 
-        # {do something with the frame here}
-        time_time = time.time()
-        blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-        net.setInput(blob)
-        if W is None or H is None:
-            (H, W) = frame.shape[:2]
-        layerOutputs = net.forward(ln)
-        #print(layerOutputs)
-        print("cost time:{}".format(time.time() - time_time))
-            
-        # initialize our lists of detected bounding boxes, confidences, and
-        # class IDs, respectively
-        boxes = []
-        confidences = []
-        classIDs = []
+                    # filter out weak predictions by ensuring the detected
+                    # probability is greater than the minimum probability
+                    if confidence > CONFIDENCE_THRESHOLD:
+                        # scale the bounding box coordinates back relative to the
+                        # size of the image, keeping in mind that YOLO actually
+                        # returns the center (x, y)-coordinates of the bounding
+                        # box followed by the boxes' width and height
+                        box = detection[0:4] * np.array([W, H, W, H])
+                        (centerX, centerY, width, height) = box.astype("int")
 
-        # loop over each of the layer outputs
-        for output in layerOutputs:
-            # loop over each of the detections
-            for detection in output:
-                # extract the class ID and confidence (i.e., probability) of
-                # the current object detection
-                scores = detection[5:]
-                classID = np.argmax(scores)
-                confidence = scores[classID]
+                        # use the center (x, y)-coordinates to derive the top and
+                        # and left corner of the bounding box
+                        x = int(centerX - (width / 2))
+                        y = int(centerY - (height / 2))
 
-                # filter out weak predictions by ensuring the detected
-                # probability is greater than the minimum probability
-                if confidence > CONFIDENCE_THRESHOLD:
-                    # scale the bounding box coordinates back relative to the
-                    # size of the image, keeping in mind that YOLO actually
-                    # returns the center (x, y)-coordinates of the bounding
-                    # box followed by the boxes' width and height
-                    box = detection[0:4] * np.array([W, H, W, H])
-                    (centerX, centerY, width, height) = box.astype("int")
+                        # update our list of bounding box coordinates, confidences,
+                        # and class IDs
+                        boxes.append([x, y, int(width), int(height)])
+                        confidences.append(float(confidence))
+                        classIDs.append(classID)
 
-                    # use the center (x, y)-coordinates to derive the top and
-                    # and left corner of the bounding box
-                    x = int(centerX - (width / 2))
-                    y = int(centerY - (height / 2))
+            # apply non-maxima suppression to suppress weak, overlapping bounding
+            # boxes
+            idxs = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, CONFIDENCE_THRESHOLD)
 
-                    # update our list of bounding box coordinates, confidences,
-                    # and class IDs
-                    boxes.append([x, y, int(width), int(height)])
-                    confidences.append(float(confidence))
-                    classIDs.append(classID)
+            # ensure at least one detection exists
+            if len(idxs) > 0:
+                # loop over the indexes we are keeping
+                for i in idxs.flatten():
+                    # extract the bounding box coordinates
+                    (x, y) = (boxes[i][0], boxes[i][1])
+                    (w, h) = (boxes[i][2], boxes[i][3])
 
-        # apply non-maxima suppression to suppress weak, overlapping bounding
-        # boxes
-        idxs = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, CONFIDENCE_THRESHOLD)
+                    color = [int(c) for c in COLORS[classIDs[i]]]
 
-        # ensure at least one detection exists
-        if len(idxs) > 0:
-            # loop over the indexes we are keeping
-            for i in idxs.flatten():
-                # extract the bounding box coordinates
-                (x, y) = (boxes[i][0], boxes[i][1])
-                (w, h) = (boxes[i][2], boxes[i][3])
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                    labelMask = LABELS[classIDs[i]]
+                    prediction = confidences[i]
+                    text = "{}: {:.4f}".format(labelMask, prediction)
+                    cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5, color, 2)
 
-                color = [int(c) for c in COLORS[classIDs[i]]]
+                    try:
+                        print("[INFO] guardando imagen...")
+                        imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
+                        cv2.imwrite(imgName, frame)
 
-                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-                labelMask = LABELS[classIDs[i]]
-                prediction = confidences[i]
-                text = "{}: {:.4f}".format(labelMask, prediction)
-                cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, color, 2)
+                        timeTimePublish = time.time()
+                        
 
-                try:
-                    print("[INFO] guardando imagen...")
-                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S")+ '.jpg'
-                    cv2.imwrite(imgName, frame)
+                        #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
 
-                    timeTimePublish = time.time()
-                    
-
-                    #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
-
-                    #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
-                    
-                    print("cost time publish:{}".format(time.time() - timeTimePublish))
-                except Exception as e:
-                    print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
-                    print(e)
-                    continue
-
+                        #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
+                        
+                        print("cost time publish:{}".format(time.time() - timeTimePublish))
+                    except Exception as e:
+                        print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
+                        print(e)
+                        continue    
+        c += 1
         fps.update()
         
         # Show output window, siempre que este activado
