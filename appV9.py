@@ -82,7 +82,7 @@ async def main():
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
-    INPUT_FILE='D://grabaciones//20201217_225917_tp00015.mp4'
+    INPUT_FILE='D://grabaciones//20201217_221605_tp00014.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
@@ -97,9 +97,7 @@ async def main():
     print(LABELS)
 
     #generar colores para cada etiqueta
-    np.random.seed(4)
-    COLORS = np.random.randint(0, 255, size=(len(LABELS), 3),
-        dtype="uint8")
+    COLORS = [(0, 255, 0), (0, 0, 255), (0, 255, 255)]
     print(COLORS)
 
     #cargar modelo  yolo
