@@ -14,6 +14,7 @@ import datetime
 import asyncio
 import paho.mqtt.client as mqtt
 import json
+import csv
 
 async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
     print("[INFO] publicando resultados...")
@@ -46,6 +47,18 @@ def publishMqtt(clientMqtt: any, labelMask:str, prediction:int, imgName:str) -> 
                         'nodo': 'CLOUD_DECODER'
                     }))
 
+def publishCsv() -> None:
+    with open('detections/metrics.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["SN", "Movie", "Protagonist"])
+        writer.writerow([1, "Lord of the Rings", "Frodo Baggins"])
+        writer.writerow([2, "Harry Potter", "Harry Potter"])
+
+def publishHeaderCsv() -> None:
+    with open('detections/metrics.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["CPU%", "RAM Total (GB)", "RAM Usada (GB)", "RAM (%)", "Etiqueta", "Prediccion(%)", "Imagen"])
+
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -55,11 +68,12 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("$SYS/#")
 
 async def main():
+    #publishHeaderCsv()
     #cargando conexion con mqtt
-    clientMqtt = mqtt.Client(client_id="nodedetector")
-    clientMqtt.on_connect = on_connect
+    #clientMqtt = mqtt.Client(client_id="nodedetector")
+    #clientMqtt.on_connect = on_connect
 
-    clientMqtt.connect("mqtt.eclipseprojects.io", 1883, 60)
+    #clientMqtt.connect("mqtt.eclipseprojects.io", 1883, 60)
     
     
     #Configuracion del modelo
@@ -67,7 +81,8 @@ async def main():
     SHOW_IMAGE = os.getenv('SHOWIMAGE', True)
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
-    INPUT_FILE='rtsp://fdquinones:1104575012@192.168.0.114:554/stream2'
+    #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
+    INPUT_FILE='D://grabaciones//20201217_225917_tp00015.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
