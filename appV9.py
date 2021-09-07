@@ -15,7 +15,7 @@ import asyncio
 import paho.mqtt.client as mqtt
 import json
 import csv
-
+ 
 async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
     print("[INFO] publicando resultados...")
     virtualM = psutil.virtual_memory()
@@ -82,7 +82,7 @@ async def main():
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
-    INPUT_FILE='D://grabaciones//20201217_221605_tp00014.mp4'
+    INPUT_FILE='D://ExportacionesGrabaciones//Iglesia_2021_09_05_19_00.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
