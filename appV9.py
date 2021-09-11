@@ -15,6 +15,7 @@ import asyncio
 import paho.mqtt.client as mqtt
 import json
 import csv
+import logging
  
 async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
     print("[INFO] publicando resultados...")
@@ -59,6 +60,7 @@ def publishHeaderCsv() -> None:
         writer = csv.writer(file)
         writer.writerow(["CPU%", "RAM Total (GB)", "RAM Usada (GB)", "RAM (%)", "Etiqueta", "Prediccion(%)", "Imagen"])
 
+
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -68,6 +70,8 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("$SYS/#")
 
 async def main():
+    logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logging.info('Inicia proceso')
     #publishHeaderCsv()
     #cargando conexion con mqtt
     #clientMqtt = mqtt.Client(client_id="nodedetector")
@@ -82,7 +86,7 @@ async def main():
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
-    INPUT_FILE='D://ExportacionesGrabaciones//Iglesia_2021_09_05_19_00.mp4'
+    INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Iglesia_2021_09_05_19_00.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
@@ -112,7 +116,7 @@ async def main():
 
     # formatting parameters as dictionary attributes
     #options = {"CAP_PROP_FRAME_WIDTH":416, "CAP_PROP_FRAME_HEIGHT":416, "CAP_PROP_FPS":15}
-    options = {"CAP_PROP_FPS":30}
+    options = {"CAP_PROP_FPS":15}
 
 
     #INICIALIZAR LA BASE DE DATOS
@@ -128,13 +132,15 @@ async def main():
 
     #Defincion de frame para procesar
     c = 1
-    frameRate = 30 # Frame number interception interval (one frame is intercepted every 100 frames)
-
+    frameRate = 15 # Frame number interception interval (one frame is intercepted every 100 frames)
+    
+    #Extra dimensiones para las capturas
+    sceneExtra = 50
     # Open suitable video stream, such as webcam on first index(i.e. 0)
     while True:
         try:
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
-            stream = CamGearUtpl(source=INPUT_FILE, logging=True, **options)
+            stream = CamGearUtpl(source=INPUT_FILE, logging=True)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
             print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
@@ -162,6 +168,7 @@ async def main():
         
         if(c % frameRate == 0):
             print("ingreso a procesar")
+            logging.info('Ingreso a procesar')
             # {do something with the frame here}
             time_time = time.time()
             blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -223,6 +230,11 @@ async def main():
 
                     color = [int(c) for c in COLORS[classIDs[i]]]
 
+                    #imgPrevia = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
+                    logging.info('Termino de procesar')
+                    #imgNamePrevia = 'detections/Previa-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
+                    #cv2.imwrite(imgNamePrevia, frame)
+                    
                     cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
                     labelMask = LABELS[classIDs[i]]
                     prediction = confidences[i]
@@ -230,13 +242,17 @@ async def main():
                     cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                         0.5, color, 2)
 
+                    logging.info('Termino de marcar la deteccion')
+
                     try:
                         print("[INFO] guardando imagen...")
+                        #imgFace = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
                         imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
                         cv2.imwrite(imgName, frame)
 
                         timeTimePublish = time.time()
                         
+                        logging.info('Termino de publicar resultados')
 
                         #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
 
