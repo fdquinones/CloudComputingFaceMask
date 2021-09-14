@@ -86,6 +86,7 @@ async def main():
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
+    #INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
     INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Iglesia_2021_09_05_19_00.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
@@ -140,6 +141,7 @@ async def main():
     while True:
         try:
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
+            logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             stream = CamGearUtpl(source=INPUT_FILE, logging=True)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
@@ -166,103 +168,102 @@ async def main():
         if frame is None:
             break
         
-        if(c % frameRate == 0):
-            print("ingreso a procesar")
-            logging.info('Ingreso a procesar')
-            # {do something with the frame here}
-            time_time = time.time()
-            blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-            net.setInput(blob)
-            if W is None or H is None:
-                (H, W) = frame.shape[:2]
-            layerOutputs = net.forward(ln)
-            #print(layerOutputs)
-            print("cost time:{}".format(time.time() - time_time))
+        print("ingreso a procesar")
+        logging.info('Ingreso a procesar')
+        # {do something with the frame here}
+        time_time = time.time()
+        blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+        net.setInput(blob)
+        if W is None or H is None:
+            (H, W) = frame.shape[:2]
+        layerOutputs = net.forward(ln)
+        #print(layerOutputs)
+        print("cost time:{}".format(time.time() - time_time))
+            
+        # initialize our lists of detected bounding boxes, confidences, and
+        # class IDs, respectively
+        boxes = []
+        confidences = []
+        classIDs = []
+
+        # loop over each of the layer outputs
+        for output in layerOutputs:
+            # loop over each of the detections
+            for detection in output:
+                # extract the class ID and confidence (i.e., probability) of
+                # the current object detection
+                scores = detection[5:]
+                classID = np.argmax(scores)
+                confidence = scores[classID]
+
+                # filter out weak predictions by ensuring the detected
+                # probability is greater than the minimum probability
+                if confidence > CONFIDENCE_THRESHOLD:
+                    # scale the bounding box coordinates back relative to the
+                    # size of the image, keeping in mind that YOLO actually
+                    # returns the center (x, y)-coordinates of the bounding
+                    # box followed by the boxes' width and height
+                    box = detection[0:4] * np.array([W, H, W, H])
+                    (centerX, centerY, width, height) = box.astype("int")
+
+                    # use the center (x, y)-coordinates to derive the top and
+                    # and left corner of the bounding box
+                    x = int(centerX - (width / 2))
+                    y = int(centerY - (height / 2))
+
+                    # update our list of bounding box coordinates, confidences,
+                    # and class IDs
+                    boxes.append([x, y, int(width), int(height)])
+                    confidences.append(float(confidence))
+                    classIDs.append(classID)
+
+        # apply non-maxima suppression to suppress weak, overlapping bounding
+        # boxes
+        idxs = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, CONFIDENCE_THRESHOLD)
+
+        # ensure at least one detection exists
+        if len(idxs) > 0:
+            # loop over the indexes we are keeping
+            for i in idxs.flatten():
+                # extract the bounding box coordinates
+                (x, y) = (boxes[i][0], boxes[i][1])
+                (w, h) = (boxes[i][2], boxes[i][3])
+
+                color = [int(c) for c in COLORS[classIDs[i]]]
+
+                #imgPrevia = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
+                logging.info('Termino de procesar')
+                #imgNamePrevia = 'detections/Previa-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
+                #cv2.imwrite(imgNamePrevia, frame)
                 
-            # initialize our lists of detected bounding boxes, confidences, and
-            # class IDs, respectively
-            boxes = []
-            confidences = []
-            classIDs = []
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                labelMask = LABELS[classIDs[i]]
+                prediction = confidences[i]
+                text = "{}: {:.4f}".format(labelMask, prediction)
+                cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5, color, 2)
 
-            # loop over each of the layer outputs
-            for output in layerOutputs:
-                # loop over each of the detections
-                for detection in output:
-                    # extract the class ID and confidence (i.e., probability) of
-                    # the current object detection
-                    scores = detection[5:]
-                    classID = np.argmax(scores)
-                    confidence = scores[classID]
+                logging.info('Termino de marcar la deteccion')
 
-                    # filter out weak predictions by ensuring the detected
-                    # probability is greater than the minimum probability
-                    if confidence > CONFIDENCE_THRESHOLD:
-                        # scale the bounding box coordinates back relative to the
-                        # size of the image, keeping in mind that YOLO actually
-                        # returns the center (x, y)-coordinates of the bounding
-                        # box followed by the boxes' width and height
-                        box = detection[0:4] * np.array([W, H, W, H])
-                        (centerX, centerY, width, height) = box.astype("int")
+                try:
+                    print("[INFO] guardando imagen...")
+                    #imgFace = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
+                    imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
+                    cv2.imwrite(imgName, frame)
 
-                        # use the center (x, y)-coordinates to derive the top and
-                        # and left corner of the bounding box
-                        x = int(centerX - (width / 2))
-                        y = int(centerY - (height / 2))
-
-                        # update our list of bounding box coordinates, confidences,
-                        # and class IDs
-                        boxes.append([x, y, int(width), int(height)])
-                        confidences.append(float(confidence))
-                        classIDs.append(classID)
-
-            # apply non-maxima suppression to suppress weak, overlapping bounding
-            # boxes
-            idxs = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, CONFIDENCE_THRESHOLD)
-
-            # ensure at least one detection exists
-            if len(idxs) > 0:
-                # loop over the indexes we are keeping
-                for i in idxs.flatten():
-                    # extract the bounding box coordinates
-                    (x, y) = (boxes[i][0], boxes[i][1])
-                    (w, h) = (boxes[i][2], boxes[i][3])
-
-                    color = [int(c) for c in COLORS[classIDs[i]]]
-
-                    #imgPrevia = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
-                    logging.info('Termino de procesar')
-                    #imgNamePrevia = 'detections/Previa-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
-                    #cv2.imwrite(imgNamePrevia, frame)
+                    timeTimePublish = time.time()
                     
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
-                    labelMask = LABELS[classIDs[i]]
-                    prediction = confidences[i]
-                    text = "{}: {:.4f}".format(labelMask, prediction)
-                    cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5, color, 2)
+                    logging.info('Termino de publicar resultados')
 
-                    logging.info('Termino de marcar la deteccion')
+                    #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
 
-                    try:
-                        print("[INFO] guardando imagen...")
-                        #imgFace = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
-                        imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
-                        cv2.imwrite(imgName, frame)
-
-                        timeTimePublish = time.time()
-                        
-                        logging.info('Termino de publicar resultados')
-
-                        #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
-
-                        #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
-                        
-                        print("cost time publish:{}".format(time.time() - timeTimePublish))
-                    except Exception as e:
-                        print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
-                        print(e)
-                        continue    
+                    #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
+                    
+                    print("cost time publish:{}".format(time.time() - timeTimePublish))
+                except Exception as e:
+                    print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
+                    print(e)
+                    continue    
         c += 1
         fps.update()
         
