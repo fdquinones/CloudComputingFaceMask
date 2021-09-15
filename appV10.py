@@ -32,22 +32,6 @@ async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgNa
                         'imagen': imgName,
                         'nodo': 'CLOUD_DECODER'
                     })
-def publishMqtt(clientMqtt: any, labelMask:str, prediction:int, imgName:str) -> None:
-    print("[INFO] publicando resultados a mqtt...")
-    virtualM = psutil.virtual_memory()
-    clientMqtt.publish ('cloud/camera', json.dumps({
-                        'fecha': datetime.datetime.now().astimezone().isoformat(),
-                        'cpuP': psutil.cpu_percent(),
-                        'virtualMemoryT': virtualM.total >> 30,
-                        'virtualMemoryP': virtualM.percent,
-                        'virtualMemory': virtualM.used >> 30,
-                        'status': 1,
-                        'label': labelMask,
-                        'prediction': prediction,
-                        'imagen': imgName,
-                        'nodo': 'CLOUD_DECODER'
-                    }))
-
 def publishCsv() -> None:
     with open('detections/metrics.csv', 'w', newline='') as file:
         writer = csv.writer(file)
