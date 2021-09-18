@@ -142,14 +142,20 @@ if __name__ == "__main__":
 		print("llego linea 139")
 		if frame is None:
 			break
-
+		
+		print("llego linea 140")
 		frame = imutils.resize(frame, width=450)
+		print("llego linea 141")
 		frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		print("llego linea 142")
 		frame = np.dstack([frame, frame, frame])
+		print("llego linea 143")
 
 		# display the size of the queue on the frame
 		cv2.putText(frame, "Queue Size: {}".format(fvs.Q.qsize()),
 			(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)	
+		
+		print("llego linea 144")
 
 		# show the frame and update the FPS counter
 		 # Show output window, siempre que este activado
