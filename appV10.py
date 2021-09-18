@@ -162,7 +162,7 @@ async def main():
         
         if(c % frameRate == 0):
             print("ingreso a procesar")
-            #logging.info('Ingreso a procesar')
+            logging.info('Ingreso a procesar')
             # {do something with the frame here}
             time_time = time.time()
             blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -244,14 +244,12 @@ async def main():
                         imgName = 'detections/Frame-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
                         cv2.imwrite(imgName, frame)
 
+                        publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
+                        publishCsv(labelMask = labelMask, prediction = prediction, imgName=imgName)
+                        #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
                         timeTimePublish = time.time()
                         
                         logging.info('Termino de publicar resultados')
-
-                        #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
-                        publishCsv(labelMask = labelMask, prediction = prediction, imgName=imgName)
-                        #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
-                        
                         print("cost time publish:{}".format(time.time() - timeTimePublish))
                     except Exception as e:
                         print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
