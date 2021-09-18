@@ -165,6 +165,7 @@ if __name__ == "__main__":
 		 # Show output window, siempre que este activado
 		print("SHOW_IMAGE {}".format(SHOW_IMAGE))
 		print("llego linea 166")
+		
 		# check for 'q' key if pressed
 		key = cv2.waitKey(1) & 0xFF
 		if key == ord("q"):
