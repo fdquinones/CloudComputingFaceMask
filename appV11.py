@@ -155,5 +155,6 @@ if __name__ == "__main__":
 	print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 	# do a bit of cleanup
-	cv2.destroyAllWindows()
+	if SHOW_IMAGE:
+		cv2.destroyAllWindows()
 	fvs.stop()
