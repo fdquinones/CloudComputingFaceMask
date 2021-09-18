@@ -5,7 +5,7 @@ import sys
 import os
 import numpy as np
 from imutils.video import FPS
-from camgear import CamGear
+from vidgear.gears import CamGear
 from firebase_admin import credentials
 from firebase_admin import db
 import firebase_admin
