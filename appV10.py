@@ -258,8 +258,8 @@ if __name__ == "__main__":
         fps.update()
         
         # Show output window, siempre que este activado
-        if SHOW_IMAGE:
-            cv2.imshow("Output", frame)
+        #if SHOW_IMAGE:
+            #cv2.imshow("Output", frame)
 
         # check for 'q' key if pressed
         key = cv2.waitKey(1) & 0xFF
