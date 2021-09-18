@@ -71,7 +71,7 @@ if __name__ == "__main__":
 			print(e)
 			time.sleep(5)
 		except:
-			print("[INFO] Error general al leer camara remota, se vuelve a intentar...")<
+			print("[INFO] Error general al leer camara remota, se vuelve a intentar...")
 			time.sleep(5)
 	#Configuracion del modelo
 	LABELS_FILE='yolo_model/obj.names'
