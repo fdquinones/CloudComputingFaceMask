@@ -66,7 +66,9 @@ if __name__ == "__main__":
 			#logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
 			fvs = FileVideoStream(INPUT_FILE).start()
 			print("llego linea 68")
-			break #  Se rompe la espera de conexion de la camara
+			if fvs.stream.isOpened(): 
+				print("Flujo abierto continuar")
+				break #  Se rompe la espera de conexion de la camara
 		except RuntimeError as e:
 			print("llego linea 71")
 			print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
