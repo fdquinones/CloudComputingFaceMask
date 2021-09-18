@@ -16,7 +16,7 @@ import psutil
 import datetime
 
 INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
-SHOW_IMAGE = os.getenv('SHOWIMAGE', True)
+SHOW_IMAGE = os.getenv('SHOW_IMAGE', True)
 
 print("------------------------imprimiendo la version de cv2----------------")
 print(cv2.__version__)
