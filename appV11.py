@@ -154,7 +154,4 @@ if __name__ == "__main__":
 	print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
 	print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-	# do a bit of cleanup
-	if SHOW_IMAGE:
-		cv2.destroyAllWindows()
 	fvs.stop()
