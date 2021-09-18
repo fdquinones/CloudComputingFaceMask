@@ -5,7 +5,7 @@ import sys
 import os
 import numpy as np
 from imutils.video import FPS
-from camgear import CamGearUtpl
+from camgear import CamGear
 from firebase_admin import credentials
 from firebase_admin import db
 import firebase_admin
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         try:
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             #logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
-            stream = CamGearUtpl(source=INPUT_FILE, logging=True)
+            stream = CamGear(source=INPUT_FILE, logging=True)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
             print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
