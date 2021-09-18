@@ -125,7 +125,9 @@ if __name__ == "__main__":
 	time.sleep(1.0)
 
 	# start the FPS timer
+	print("llego linea 128")
 	fps = FPS().start()
+	print("llego linea 130")
 
 	# loop over frames from the video file stream
 	while fvs.more():
