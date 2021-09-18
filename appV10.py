@@ -11,7 +11,6 @@ from firebase_admin import db
 import firebase_admin
 import psutil
 import datetime
-import asyncio
 import paho.mqtt.client as mqtt
 import json
 import csv
@@ -61,7 +60,7 @@ def on_connect(client, userdata, flags, rc):
     # reconnect then subscriptions will be renewed.
     client.subscribe("$SYS/#")
 
-async def main():
+if __name__ == "__main__":
     logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s,%(message)s')
     logging.info('Inicia proceso')
     publishHeaderCsv()
@@ -276,6 +275,3 @@ async def main():
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-
-
-asyncio.run(main())
