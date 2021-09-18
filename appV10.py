@@ -61,8 +61,8 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("$SYS/#")
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s,%(message)s')
-    logging.info('Inicia proceso')
+    #logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s,%(message)s')
+    #logging.info('Inicia proceso')
     publishHeaderCsv()
     #cargando conexion con mqtt
     #clientMqtt = mqtt.Client(client_id="nodedetector")
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     while True:
         try:
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
-            logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
+            #logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             stream = CamGearUtpl(source=INPUT_FILE, logging=True)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
         
         if(c % frameRate == 0):
             print("ingreso a procesar")
-            logging.info('Ingreso a procesar')
+            #logging.info('Ingreso a procesar')
             # {do something with the frame here}
             time_time = time.time()
             blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -248,7 +248,7 @@ if __name__ == "__main__":
                         #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
                         timeTimePublish = time.time()
                         
-                        logging.info('Termino de publicar resultados')
+                        #logging.info('Termino de publicar resultados')
                         print("cost time publish:{}".format(time.time() - timeTimePublish))
                     except Exception as e:
                         print("[INFO] Error al guardar la imagen...", sys.exc_info()[0])
