@@ -1,4 +1,4 @@
-FROM python:3.9-bullseye AS base
+FROM dkimg/opencv:4.5.3-ubuntu AS base
 EXPOSE 5000
 
 WORKDIR /utpl
