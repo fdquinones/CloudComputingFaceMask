@@ -69,6 +69,7 @@ if __name__ == "__main__":
 			if fvs.stream.isOpened(): 
 				print("Flujo abierto continuar")
 				break #  Se rompe la espera de conexion de la camara
+			time.sleep(5)
 		except RuntimeError as e:
 			print("llego linea 71")
 			print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
