@@ -17,7 +17,7 @@ import json
 import csv
 import logging
  
-async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
+def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
     print("[INFO] publicando resultados...")
     virtualM = psutil.virtual_memory()
     refDatabase.push({
@@ -32,17 +32,25 @@ async def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgNa
                         'imagen': imgName,
                         'nodo': 'CLOUD_DECODER'
                     })
-def publishCsv() -> None:
-    with open('detections/metrics.csv', 'w', newline='') as file:
+def publishCsv(labelMask:str, prediction:int, imgName:str) -> None:
+    print("[INFO] publicando resultados a csv...")
+    virtualM = psutil.virtual_memory()
+    with open('detections/metrics.csv', 'a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["SN", "Movie", "Protagonist"])
-        writer.writerow([1, "Lord of the Rings", "Frodo Baggins"])
-        writer.writerow([2, "Harry Potter", "Harry Potter"])
+        writer.writerow([datetime.datetime.now().astimezone().isoformat()
+        , psutil.cpu_percent()
+        ,virtualM.total >> 30
+        ,virtualM.percent
+        ,virtualM.used >> 30
+        ,1
+        ,labelMask
+        ,prediction
+        ,imgName])
 
 def publishHeaderCsv() -> None:
     with open('detections/metrics.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["CPU%", "RAM Total (GB)", "RAM Usada (GB)", "RAM (%)", "Etiqueta", "Prediccion(%)", "Imagen"])
+        writer.writerow(["Fecha", "CPU%", "RAM Total (GB)", "RAM Usada (GB)", "RAM (%)", "Etiqueta", "Prediccion(%)", "Imagen"])
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -54,9 +62,9 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("$SYS/#")
 
 async def main():
-    logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logging.basicConfig(filename='detections/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s,%(message)s')
     logging.info('Inicia proceso')
-    #publishHeaderCsv()
+    publishHeaderCsv()
     #cargando conexion con mqtt
     #clientMqtt = mqtt.Client(client_id="nodedetector")
     #clientMqtt.on_connect = on_connect
@@ -70,8 +78,8 @@ async def main():
     #INPUT_FILE='rtsp://192.168.0.100:5540/ch0'
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
-    #INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
-    INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Iglesia_2021_09_05_19_00.mp4'
+    INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
+    #INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Pruebascontroladas.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
@@ -154,7 +162,7 @@ async def main():
         
         if(c % frameRate == 0):
             print("ingreso a procesar")
-            logging.info('Ingreso a procesar')
+            #logging.info('Ingreso a procesar')
             # {do something with the frame here}
             time_time = time.time()
             blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -217,7 +225,7 @@ async def main():
                     color = [int(c) for c in COLORS[classIDs[i]]]
 
                     #imgPrevia = frame [ y - sceneExtra: (y + h) + sceneExtra, x - sceneExtra : (x + w) + sceneExtra]
-                    logging.info('Termino de procesar')
+                    #logging.info('Termino de procesar')
                     #imgNamePrevia = 'detections/Previa-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(c) + '.jpg'
                     #cv2.imwrite(imgNamePrevia, frame)
                     
@@ -228,7 +236,7 @@ async def main():
                     cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                         0.5, color, 2)
 
-                    logging.info('Termino de marcar la deteccion')
+                    #logging.info('Termino de marcar la deteccion')
 
                     try:
                         print("[INFO] guardando imagen...")
@@ -241,7 +249,7 @@ async def main():
                         logging.info('Termino de publicar resultados')
 
                         #publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
-
+                        publishCsv(labelMask = labelMask, prediction = prediction, imgName=imgName)
                         #publishMqtt(clientMqtt=clientMqtt, labelMask = labelMask, prediction = prediction, imgName=imgName )
                         
                         print("cost time publish:{}".format(time.time() - timeTimePublish))

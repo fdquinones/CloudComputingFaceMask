@@ -40,7 +40,7 @@
 			<div class="collapse navbar-collapse collapse-payment" id="navbarCollapse">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">
-						<a class="nav-link app-header-payment-item" href="https://www.utpl.edu.ec/">Face mask detector <span class="sr-only">(current)</span></a>
+						<a class="nav-link app-header-payment-item" href="https://www.utpl.edu.ec/">Face Mask Detector <span class="sr-only">(current)</span></a>
 					</li>
 				</ul>
 			</div>
@@ -50,45 +50,48 @@
 	<main role="main" class="container-fluid container-payment">
 		<div class="container">
 			<div class="row">
-				<div class="col">
+				<!--<div class="col">
 					<h3 class="mt-5">Live Streaming</h3>
 					<canvas id="video-canvas">
 					</canvas>
-				</div>
-				<div class="col">
+				</div>-->
+				<div class="col-6">
 					<h3 class="mt-5">Detección</h3>
 					<img alt="Ultima" id="imgDetection" class="img-thumbnail mx-auto d-block" src="/static/detections/Frame-2021_07_19_17_52_30.jpg"/>
 				</div>
+				<div class="col-6">
+					<div class="table100 ver2 m-b-110" style="width: 100%;">
+						<table data-vertable="ver2" id="tableData">
+							<thead>
+								<tr class="row100 head">
+									<th class="column100 column1" data-column="column1">FECHA</th>
+									<th class="column100 column2" data-column="column2">CPU (%)</th>
+									<th class="column100 column3" data-column="column3">RAM TOTAL (GB)</th>
+									<th class="column100 column4" data-column="column4">RAM USADA (GB)</th>
+									<th class="column100 column5" data-column="column5">RAM PORCENTAJE (%)</th>
+									<th class="column100 column6" data-column="column6">ETIQUETA</th>
+									<th class="column100 column7" data-column="column7">PREDICCIÓN (%)</th>
+									<th class="column100 column8" data-column="column8">IMAGEN</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="row100">
+									<td class="column100 column1" data-column="column1">--</td>
+									<td class="column100 column2" data-column="column2">--</td>
+									<td class="column100 column3" data-column="column3">--</td>
+									<td class="column100 column4" data-column="column4">--</td>
+									<td class="column100 column5" data-column="column5">--</td>
+									<td class="column100 column6" data-column="column6">--</td>
+									<td class="column100 column7" data-column="column7">--</td>
+									<td class="column100 column8" data-column="column8">--</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 			<div class="row">		
-				<div class="table100 ver2 m-b-110" style="width: 100%;">
-					<table data-vertable="ver2" id="tableData">
-						<thead>
-							<tr class="row100 head">
-								<th class="column100 column1" data-column="column1">FECHA</th>
-								<th class="column100 column2" data-column="column2">CPU (%)</th>
-								<th class="column100 column3" data-column="column3">RAM TOTAL (GB)</th>
-								<th class="column100 column4" data-column="column4">RAM USADA (GB)</th>
-								<th class="column100 column5" data-column="column5">RAM PORCENTAJE (%)</th>
-								<th class="column100 column6" data-column="column6">ETIQUETA</th>
-								<th class="column100 column7" data-column="column7">PREDICCIÓN (%)</th>
-								<th class="column100 column8" data-column="column8">IMAGEN</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="row100">
-								<td class="column100 column1" data-column="column1">--</td>
-								<td class="column100 column2" data-column="column2">--</td>
-								<td class="column100 column3" data-column="column3">--</td>
-								<td class="column100 column4" data-column="column4">--</td>
-								<td class="column100 column5" data-column="column5">--</td>
-								<td class="column100 column6" data-column="column6">--</td>
-								<td class="column100 column7" data-column="column7">--</td>
-								<td class="column100 column8" data-column="column8">--</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				
 			</div>
 		</div>
 	</main>
