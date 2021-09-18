@@ -160,12 +160,19 @@ if __name__ == "__main__":
 		
 		print("llego linea 144")
 
+		fps.update()
 		# show the frame and update the FPS counter
 		 # Show output window, siempre que este activado
+		print("SHOW_IMAGE {}".format(SHOW_IMAGE))
+		print("llego linea 166")
 		if SHOW_IMAGE:
+			print("llego linea 167")
 			cv2.imshow("Frame", frame)
-		cv2.waitKey(1)
-		fps.update()
+		# check for 'q' key if pressed
+		key = cv2.waitKey(1) & 0xFF
+		if key == ord("q"):
+			break
+		
 
 	# stop the timer and display FPS information
 	fps.stop()
