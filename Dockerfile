@@ -9,7 +9,7 @@ RUN python --version
 RUN ls
 RUN apt-get update
 RUN apt install -y libgl1-mesa-glx
-RUN apt-get install qt5-default
+RUN apt-get install qt5-default -y
 RUN pip install opencv-python
 RUN pip install vidgear
 RUN pip install imutils
