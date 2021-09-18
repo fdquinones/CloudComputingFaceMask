@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow AS base
+FROM python:3.9-bullseye AS base
 EXPOSE 5000
 
 WORKDIR /utpl
