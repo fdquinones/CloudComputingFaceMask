@@ -131,10 +131,12 @@ if __name__ == "__main__":
 
 	# loop over frames from the video file stream
 	while fvs.more():
+		print("llego linea 134")
 		# grab the frame from the threaded video file stream, resize
 		# it, and convert it to grayscale (while still retaining 3
 		# channels)
 		frame = fvs.read()
+		print("llego linea 139")
 		if frame is None:
 			break
 
