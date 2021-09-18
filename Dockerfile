@@ -17,4 +17,4 @@ RUN pip install psutil
 RUN pip install paho-mqtt
 
 
-CMD [ "python3", "appV10.py"]
+CMD [ "python3", "appV11.py"]
