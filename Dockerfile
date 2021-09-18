@@ -4,7 +4,7 @@ EXPOSE 5000
 WORKDIR /utpl
 COPY . .
 
-RUN lsb_release -a
+RUN cat /proc/version
 RUN python --version
 RUN ls
 RUN apt-get update
