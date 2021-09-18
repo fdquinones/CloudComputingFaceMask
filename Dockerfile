@@ -5,7 +5,7 @@ WORKDIR /utpl
 COPY . .
 
 RUN cat /proc/version
-RUN python --version
+RUN python3 --version
 RUN ls
 RUN apt-get update
 RUN apt install -y libgl1-mesa-glx
