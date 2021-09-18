@@ -64,7 +64,7 @@ if __name__ == "__main__":
 		try:
 			print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
 			#logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
-			fvs = FileVideoStream("rtsp://159.69.217.242:9665/mystream").start()
+			fvs = FileVideoStream(INPUT_FILE).start()
 			break #  Se rompe la espera de conexion de la camara
 		except RuntimeError as e:
 			print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
