@@ -18,7 +18,7 @@ import datetime
 INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
 SHOW_IMAGE = os.getenv('SHOWIMAGE', True)
 
-print("imprimiendo la version de cv2")
+print("------------------------imprimiendo la version de cv2----------------")
 print(cv2.__version__)
 
 def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
@@ -65,12 +65,15 @@ if __name__ == "__main__":
 			print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
 			#logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
 			fvs = FileVideoStream(INPUT_FILE).start()
+			print("llego linea 68")
 			break #  Se rompe la espera de conexion de la camara
 		except RuntimeError as e:
+			print("llego linea 71")
 			print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
 			print(e)
 			time.sleep(5)
 		except:
+			print("llego linea 76")
 			print("[INFO] Error general al leer camara remota, se vuelve a intentar...")
 			time.sleep(5)
 	#Configuracion del modelo
