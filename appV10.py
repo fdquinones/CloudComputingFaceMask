@@ -160,8 +160,8 @@ if __name__ == "__main__":
             break
         
         if(c % frameRate == 0):
-            imgNameLog = 'detections/FOTO-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '.jpg'
-            cv2.imwrite(imgNameLog, frame)
+            #imgNameLog = 'detections/FOTO-'+ time.strftime("%Y_%m_%d_%H_%M_%S") + '.jpg'
+            #cv2.imwrite(imgNameLog, frame)
             print("ingreso a procesar")
             
             #logging.info('Ingreso a procesar')
