@@ -36,20 +36,29 @@ def publishCsv(labelMask:str, prediction:int, imgName:str) -> None:
     virtualM = psutil.virtual_memory()
     with open('detections/metrics.csv', 'a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([datetime.datetime.now().astimezone().isoformat()
-        , psutil.cpu_percent()
-        ,virtualM.total >> 30
-        ,virtualM.percent
-        ,virtualM.used >> 30
-        ,1
-        ,labelMask
-        ,prediction
-        ,imgName])
+        writer.writerow([
+            datetime.datetime.now().astimezone().isoformat(),
+            psutil.cpu_percent(),
+            virtualM.total >> 30,
+            virtualM.percent,
+            virtualM.used >> 30,
+            labelMask,
+            prediction,
+            imgName])
 
 def publishHeaderCsv() -> None:
     with open('detections/metrics.csv', 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Fecha", "CPU%", "RAM Total (GB)", "RAM Usada (GB)", "RAM (%)", "Etiqueta", "Prediccion(%)", "Imagen"])
+        writer.writerow(
+            [
+                "Fecha", 
+                "CPU%", 
+                "RAM Total (GB)", 
+                "RAM Usada (GB)", 
+                "RAM (%)", 
+                "Etiqueta", 
+                "Prediccion(%)", 
+                "Imagen"])
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -138,7 +147,7 @@ if __name__ == "__main__":
         except RuntimeError as e:
             print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
             print(e)
-            time.sleep(5)
+            time.sleep(10)
 
     #Inicia el flujo de lectura
     stream.start()
