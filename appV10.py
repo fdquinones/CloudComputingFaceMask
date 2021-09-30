@@ -15,6 +15,7 @@ import paho.mqtt.client as mqtt
 import json
 import csv
 import logging
+import os.path
  
 def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
     print("[INFO] publicando resultados...")
@@ -47,18 +48,20 @@ def publishCsv(labelMask:str, prediction:int, imgName:str) -> None:
             imgName])
 
 def publishHeaderCsv() -> None:
-    with open('detections/metrics.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(
-            [
-                "Fecha", 
-                "CPU%", 
-                "RAM Total (GB)", 
-                "RAM Usada (GB)", 
-                "RAM (%)", 
-                "Etiqueta", 
-                "Prediccion(%)", 
-                "Imagen"])
+    #si no existe enviar a crear el archivo.
+    if os.path.exists('detections/metrics.csv') != False :
+        with open('detections/metrics.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [
+                    "Fecha", 
+                    "CPU%", 
+                    "RAM Total (GB)", 
+                    "RAM Usada (GB)", 
+                    "RAM (%)", 
+                    "Etiqueta", 
+                    "Prediccion(%)", 
+                    "Imagen"])
 
 
 # The callback for when the client receives a CONNACK response from the server.
