@@ -146,6 +146,7 @@ if __name__ == "__main__":
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             #logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             stream = CamGear(source=INPUT_FILE, logging=True)
+            time.sleep(3)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
             print("[INFO] Error  al leer camara remota, se vuelve a intentar...", sys.exc_info()[0])
