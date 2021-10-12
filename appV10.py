@@ -50,7 +50,7 @@ def publishCsv(labelMask:str, prediction:int, imgName:str) -> None:
 def publishHeaderCsv() -> None:
     #si no existe enviar a crear el archivo.
     if os.path.exists('detections/metrics.csv') != False :
-        with open('detections/metrics.csv', 'w', newline='') as file:
+        with open('detections/metrics.csv', 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(
                 [
