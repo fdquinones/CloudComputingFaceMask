@@ -37,7 +37,7 @@ async def main():
     #INPUT_FILE='rtsp://fdquinones:1104575012@190.96.102.151:15540/stream2'
     #INPUT_FILE='rtsp://fdquinones:1104575012@192.168.1.100:554/stream2'
     #INPUT_FILE = 'rtsp://159.69.217.242:9665/mystream'
-    INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Iglesia_2021_09_05_19_00.mp4'
+    INPUT_FILE='C://Users//fdquinones//Documents//Projects//Utpl-maestria//Cisne_2021_08_29_16_00.mp4'
     OUTPUT_FILE='output.avi'
     LABELS_FILE='yolo_model/obj.names'
     CONFIG_FILE='yolo_model/yolov3_tiny_ygb.cfg'
@@ -195,7 +195,7 @@ async def main():
 
                         timeTimePublish = time.time()
 
-                        cloudinary.uploader.upload(imgName, folder = "utpl")
+                        #cloudinary.uploader.upload(imgName, folder = "utpl")
                         
                         logging.info('Termino de publicar resultados')
 
