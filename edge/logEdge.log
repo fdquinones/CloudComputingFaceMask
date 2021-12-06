@@ -1,0 +1,17 @@
+2021-08-06 16:20:46,658 Ingreso a procesar
+2021-08-06 16:20:46,769 Termino de marcar la deteccion Mascarilla correcta
+2021-08-06 16:20:46,774 text: Mascarilla correcta
+2021-08-06 16:20:46,774 tld: com
+2021-08-06 16:20:46,774 lang: es
+2021-08-06 16:20:46,774 slow: False
+2021-08-06 16:20:46,774 lang_check: True
+2021-08-06 16:20:46,774 pre_processor_funcs: [<function tone_marks at 0x1600018777BF23A0>, <function end_of_line at 0x0000018777BF2CA0>, <function abbreviations at 0x0000018777BF2C10>, <function word_sub at 0x0000018777BF2DC0>]
+2021-08-06 16:20:46,774 tokenizer_func: <bound method Tokenizer.run of re.compile('(?<=\\?).|(?<=!).|(?<=？).|(?<=！).|(?<!\\.[a-z])\\. |(?<!\\.[a-z]), |(?<!\\d):|،|\\\n|—|‥|\\]|¿|;|\\[|。|\\(|¡|\\)|：|，|、|…', re.IGNORECASE) from: [<function tone_marks at 0x0000018777BF2E50>, <function period_comma at 0x0000018777BFF0D0>, <function colon at 0x0000018777BFF160>, <function other_punctuation at 0x0000018777BFF1F0>]>
+2021-08-06 16:20:46,774 langs: {'af': 'Afrikaans', 'ar': 'Arabic', 'bg': 'Bulgarian', 'bn': 'Bengali', 'bs': 'Bosnian', 'ca': 'Catalan', 'cs': 'Czech', 'cy': 'Welsh', 'da': 'Danish', 'de': 'German', 'el': 'Greek', 'en': 'English', 'eo': 'Esperanto', 'es': 'Spanish', 'et': 'Estonian', 'fi': 'Finnish', 'fr': 'French', 'gu': 'Gujarati', 'hi': 'Hindi', 'hr': 'Croatian', 'hu': 'Hungarian', 'hy': 'Armenian', 'id': 'Indonesian', 'is': 'Icelandic', 'it': 'Italian', 'ja': 'Japanese', 'jw': 'Javanese', 'km': 'Khmer', 'kn': 'Kannada', 'ko': 'Korean', 'la': 'Latin', 'lv': 'Latvian', 'mk': 'Macedonian', 'ml': 'Malayalam', 'mr': 'Marathi', 'my': 'Myanmar (Burmese)', 'ne': 'Nepali', 'nl': 'Dutch', 'no': 'Norwegian', 'pl': 'Polish', 'pt': 'Portuguese', 'ro': 'Romanian', 'ru': 'Russian', 'si': 'Sinhala', 'sk': 'Slovak', 'sq': 'Albanian', 'sr': 'Serbian', 'su': 'Sundanese', 'sv': 'Swedish', 'sw': 'Swahili', 'ta': 'Tamil', 'te': 'Telugu', 'th': 'Thai', 'tl': 'Filipino', 'tr': 'Turkish', 'uk': 'Ukrainian', 'ur': 'Urdu', 'vi': 'Vietnamese', 'zh-CN': 'Chinese', 'zh-TW': 'Chinese (Mandarin/Taiwan)', 'zh': 'Chinese (Mandarin)'}
+2021-08-06 16:20:46,776 pre-processing: <function tone_marks at 0x0000018777BF23A0>
+2021-08-06 16:20:46,776 pre-processing: <function end_of_line at 0x0000018777BF2CA0>
+2021-08-06 16:20:46,776 pre-processing: <function abbreviations at 0x1600018777BF2C10>
+2021-08-06 16:20:46,777 pre-processing: <function word_sub at 0x0000018777BF2DC0>
+2021-08-06 16:20:46,777 text_parts: ['Mascarilla correcta']
+2021-08-06 16:20:46,777 text_parts: 1
+2021-08-06 16:20:49,312 Termino de publicar resultados Mascarilla correcta 2,5378432273864746
