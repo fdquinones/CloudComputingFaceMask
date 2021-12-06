@@ -34,7 +34,7 @@ def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str
                         'nodo': 'CLOUD_DECODER'
                     })
 
-async def main():
+if __name__ == "__main__":
     logging.basicConfig(filename='cloud/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logging.info('Inicia proceso')
     
@@ -249,6 +249,3 @@ async def main():
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-
-
-asyncio.run(main())
