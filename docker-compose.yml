@@ -25,5 +25,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./detections:/app/static/detections
+      - ./cloud:/app/static/cloud
     ports:
       - "5005:5000"
