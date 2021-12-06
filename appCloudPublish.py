@@ -16,8 +16,6 @@ import paho.mqtt.client as mqtt
 import json
 import csv
 import logging
-import cloudinary
-import cloudinary.uploader
 
 
 def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str) -> None:
