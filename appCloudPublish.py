@@ -35,8 +35,8 @@ def publishDatabase(refDatabase: any, labelMask:str, prediction:int, imgName:str
                     })
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='cloud/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
-    logging.info('Inicia proceso')
+    #logging.basicConfig(filename='cloud/utplfacemask.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    #logging.info('Inicia proceso')
     
     #publishHeaderCsv()
     #cargando conexion con mqtt
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     while True:
         try:
             print("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
-            logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
+            #logging.info("[INFO] Estableciendo conexion con la camara {}".format(INPUT_FILE))
             stream = CamGearUtpl(source=INPUT_FILE, logging=True)
             break #  Se rompe la espera de conexion de la camara
         except RuntimeError as e:
@@ -138,7 +138,7 @@ if __name__ == "__main__":
         
         if(c % frameRate == 0):
             print("ingreso a procesar")
-            logging.info('Ingreso a procesar')
+            #logging.info('Ingreso a procesar')
             # {do something with the frame here}
             time_time = time.time()
             blob = cv2.dnn.blobFromImage(frame, 1 / 255.0, (416, 416), swapRB=True, crop=False)
@@ -207,8 +207,8 @@ if __name__ == "__main__":
                     cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                         0.5, color, 2)
 
-                    logging.info('Termino de marcar la deteccion {}'.format(labelMask))
-
+                    #logging.info('Termino de marcar la deteccion {}'.format(labelMask))
+                    print('Termino de marcar la deteccion {}'.format(labelMask))
                     try:
                         print("[INFO] guardando imagen...")
                         imgFace = frame [ y : (y + h), x : (x + w)]
@@ -221,7 +221,8 @@ if __name__ == "__main__":
                         publishDatabase(refDatabase=refDatabase, labelMask = labelMask, prediction = prediction, imgName=imgName )
                         timeTimePublish = time.time()
                         
-                        logging.info('Termino de publicar resultados cloud {} {}'.format(labelMask, time.time() - timeTimePublish))
+                        #logging.info('Termino de publicar resultados cloud {} {}'.format(labelMask, time.time() - timeTimePublish))
+                        print('Termino de publicar resultados cloud {} {}'.format(labelMask, time.time() - timeTimePublish))
                         print("cost time publish:{}".format(time.time() - timeTimePublish))
                         
                     except Exception as e:
